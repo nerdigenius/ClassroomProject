@@ -8,6 +8,12 @@ body {
   align-items: flex-start;
   flex-direction: column;
   align-items: center;
+  position: relative;
+  min-height: 100%;
+  min-width: 100%;
+  width: fit-content;
+  height: fit-content;
+  z-index: 0;
 }
 html {
   height: 100%;
@@ -40,7 +46,6 @@ html {
   top: 0;
   width: 100%;
   filter: drop-shadow(0px 1px 7px #000);
-  position: absolute;
 }
 
 .login {
@@ -152,8 +157,6 @@ button:hover {
   filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
   flex-direction: column;
   padding: 40px;
-  position: absolute;
-  top: 70px;
 }
 .userIcon {
   height: 130px;
@@ -169,6 +172,9 @@ button:hover {
 th {
   background-color: #6973cd;
   color: white;
+  position: sticky;
+  z-index: 2;
+  top: 0;
 }
 th,
 td {
@@ -184,9 +190,16 @@ td,
 table {
   font-family: "Comic Sans MS";
 }
+tbody{
+  display: block;
+  overflow:auto ;
+  height: 400px;
+}
 table {
   margin-top: 20px;
   border-collapse: collapse;
+  overflow: auto;
+  max-height: 500px;
 }
 .buttonTable {
   width: 40px;
@@ -209,15 +222,56 @@ table {
 h1 {
   font-family: "Comic Sans MS";
 }
-.loginItems{
-  width: 50%;display: flex;justify-content: space-around;flex-direction: column;padding:3%
+.loginItems {
+  width: 50%;
+  display: flex;
+  justify-content: space-around;
+  flex-direction: column;
+  padding: 3%;
+}
+
+.popupContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.439);
+  z-index: 1;
+  position: absolute;
+}
+.popup {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  background-color: #4D559D;
+  min-width: 400px;
+  min-height: 150px;
+  max-width: 400px;
+  max-height: 200px;
+  justify-content: space-evenly; 
+  border-radius: 30px;
+}
+.popupButton {
+  background-color: #212653;
+  width: 100px;
+}
+.popupSpan{
+  width: 100%;
+  text-align: center;
+  color: white;
+  font-family: "Comic Sans MS";
+  font-size: medium;
+}
+.highlighted{
+  background-color: #3a3fc1;
 }
 
 @media only screen and (max-width: 768px) {
-  .loginLogo{
+  .loginLogo {
     display: none;
   }
-  .loginItems{
+  .loginItems {
     width: 100%;
   }
 }

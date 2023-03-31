@@ -61,15 +61,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <form method="post" class="loginform">
                 <p class="textTop">Signup</p>
                 <div class="form-group">
-                    <input type="email" id="email" class="form-control" name="email" />
+                    <input type="email" id="email" class="form-control"placeholder=" " name="email" />
                     <label for="email" class="form-label">Email</label>
                 </div>
                 <div class="form-group">
-                    <input type="text" id="name" class="form-control" name="name"/>
+                    <input type="text" id="name" class="form-control"placeholder=" " name="name"/>
                     <label for="name" class="form-label">Name</label>
                 </div>
                 <div class="form-group">
-                    <input type="password" id="password" class="form-control" name="password" />
+                    <input type="password" id="password" class="form-control" placeholder=" "name="password" />
                     <label for="password" class="form-label">Password</label>
                 </div>
                 <div class="form-group">

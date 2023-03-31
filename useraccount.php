@@ -30,9 +30,11 @@ if (!isset($_SESSION['user_id'])) {
     <title>ClassRoomBooking</title>
 </head>
 
-<body id="particles-js">
+<body >
+    <div id="particles-js" style="position: absolute;height:100%;width:100%;margin:0;display:flex;"></div>
     <script src="http://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script src="http://threejs.org/examples/js/libs/stats.min.js"></script>
+    <script src="particle.js"></script>
     <div class="navbar">
         <img onclick="location.href='index.php';" src='logo.png' alt="My" class="appLogo">
         <h1>ClassRoom Booking System</h1>
@@ -46,7 +48,7 @@ if (!isset($_SESSION['user_id'])) {
                 <form action="logout.php" method="POST" style="width: fit-content;"><button type="submit" style="width: 100px">Logout</button></form>
             </div>
         </div>
-        <div>
+        <div >
             <span class="tableHeader">Booked Classrooms: </span>
             <table>
                 <tr>
@@ -91,16 +93,16 @@ if (!isset($_SESSION['user_id'])) {
                     <th>Time</th>
                 </tr>
                 <?php
-                    $sql = "SELECT * FROM `bookings` join `time_slots` on bookings.time_slot_id=time_slots.id join seats on bookings.booked_item_id =seats.id where user_id='$user_id'";
-                    $result = $link->query($sql);
-                    if ($result->num_rows > 0) {
-                        while ($row = $result->fetch_assoc()) {
-                            echo "<tr><td>" . $row["id"] ."</td><td>".$row["room_number"]. "</td><td>" . $row["date"] . "</td><td>" . $row["start_time"] . " to " . $row["end_time"] . "</td><td style='border: 0; width:auto'><button class='buttonTable'>X</button></td></tr>";
-                        }
-                    } else {
-                        echo "0 results";
+                $sql = "SELECT * FROM `bookings` join `time_slots` on bookings.time_slot_id=time_slots.id join seats on bookings.booked_item_id =seats.id where user_id='$user_id'";
+                $result = $link->query($sql);
+                if ($result->num_rows > 0) {
+                    while ($row = $result->fetch_assoc()) {
+                        echo "<tr><td>" . $row["id"] . "</td><td>" . $row["room_number"] . "</td><td>" . $row["date"] . "</td><td>" . $row["start_time"] . " to " . $row["end_time"] . "</td><td style='border: 0; width:auto'><button class='buttonTable'>X</button></td></tr>";
                     }
-                 ?>
+                } else {
+                    echo "0 results";
+                }
+                ?>
                 <tr>
                     <td>6</td>
                     <td>6008</td>
@@ -119,13 +121,35 @@ if (!isset($_SESSION['user_id'])) {
             </table>
         </div>
         <div style="display:flex;margin-top: 20px;justify-content:flex-end;width:100%">
-            <button style="width: 100px;">Add More</button>
+            <button style="width: 100px;" onclick="popup()">Add More</button>
         </div>
 
     </div>
 
-
+    <div class="popupContainer" id="popupContainer" onclick="popupClose()">
+        <div class="popup">
+            <span class="popupSpan">What kind of bookings do you want to make?</span>
+            
+            <div style="display: flex;justify-content:space-evenly">
+            <button class="popupButton" id="ClassRoomBtn" onclick="GoClassRoom()">Classroom</button>
+            <button class="popupButton" id="SeatsBtn">Seats</button>
+            </div>
+            
+        </div>
+    </div>
 </body>
+<script>
+    function popup(){
+        document.getElementById("popupContainer").style.display = "flex";
+    }
+    function popupClose(){
+        document.getElementById("popupContainer").style.display = "none";
+    }
+    function GoClassRoom(){
+        location.href='classRoomBooking.php'
+    }
+
+</script>
 <script src="particle.js"></script>
 
 </html>
