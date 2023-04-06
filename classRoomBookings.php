@@ -64,6 +64,9 @@ if (!isset($_SESSION['user_id'])) {
                 </tbody>
 
             </table>
+            <div style="display: flex;width:100%;justify-content: flex-end;margin-top:40px">
+                <button style="width: 100px;justify-content:flex-end" onclick="submitForm()">Done!</button>
+            </div>
         </div>
     </div>
     <script>
@@ -84,24 +87,36 @@ if (!isset($_SESSION['user_id'])) {
                     if (xhr.readyState === 4 && xhr.status === 200) {
                         data = JSON.parse(xhr.responseText);
                         let tableHTML = " <tr><th style='border:0'>Room Number</th><th style='border:0'>Date</th><th style='border:0'>Time</th><th style='border:0'>Seat Capacity</th><th style='width:20px;background-color:white;border:0'></th></tr>";
-                        console.log(data[0]);
+                        let row = "";
                         for (let i = 0; i < data.length; i++) {
-                            const row = "<tr>" +
-                                "<td id='row1" + i + "'>" + data[i].id + "</td>" +
-                                "<td id='row2" + i + "'>" + data[i].date + "</td>" +
-                                "<td id='row3" + i + "'>" + data[i].start_time + " to " + data[i].end_time + "</td>" +
-                                "<td id='row4" + i + "'>" + data[i].seat_capacity + "</td>" +
-                                "<td style='border: 0; width:auto'>" + "<input type='checkbox' name='' id='checkbox"+i+"'"+"onclick='toggleHighlight("+i+")'>" + "</td>"
-                            "</tr>";
+                            if (data[i].status === "booked") {
+                                row = "<tr>" +
+                                    "<td style='background-color: grey;' id='row1" + i + "'>" + data[i].id + "</td>" +
+                                    "<td style='background-color: grey;' id='row2" + i + "'>" + data[i].date + "</td>" +
+                                    "<td style='background-color: grey;' id='row3" + i + "'>" + "<span id='row31" + i + "'>" + data[i].start_time + "</span>" + " to " + data[i].end_time + "</td>" +
+                                    "<td style='background-color: grey;' id='row4" + i + "'>" + data[i].seat_capacity + "</td>" +
+                                    "<td style='border: 0; width:auto'>" + "<input type='checkbox' name='' id='checkbox" + i + "'" + "onclick='toggleHighlight(" + i + ")' disabled>" + "</td>"
+
+                                "</tr>";
+                            } else {
+                                row = "<tr>" +
+                                    "<td id='row1" + i + "'>" + data[i].id + "</td>" +
+                                    "<td id='row2" + i + "'>" + data[i].date + "</td>" +
+                                    "<td id='row3" + i + "'>" + "<span id='row31" + i + "'>" + data[i].start_time + "</span>" + " to " + data[i].end_time + "</td>" +
+                                    "<td id='row4" + i + "'>" + data[i].seat_capacity + "</td>" +
+                                    "<td style='border: 0; width:auto'>" + "<input type='checkbox' name='' id='checkbox" + i + "'" + "onclick='toggleHighlight(" + i + ")'>" + "</td>"
+                                "</tr>";
+                            }
+
 
                             tableHTML += row;
                         }
-
                         classroomTableBody.innerHTML = tableHTML;
                     }
                 };
                 xhr.open("POST", "getTableData.php", true);
                 xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                console.log(selectedDate);
                 xhr.send("date=" + selectedDate);
             } else {
                 classroomTable.style.display = "none";
@@ -122,6 +137,52 @@ if (!isset($_SESSION['user_id'])) {
                 document.getElementById("row3" + id).classList.remove("highlighted");
                 document.getElementById("row4" + id).classList.remove("highlighted");
             }
+        }
+
+        function submitForm() {
+            var selectedRows = [];
+            var classroomTableBody = document.getElementById("classroomTableBody");
+            var rows = classroomTableBody.getElementsByTagName("tr");
+            for (var i = 1; i < rows.length; i++) {
+                var row = rows[i];
+                var checkbox = row.getElementsByTagName("input")[0];
+                if (checkbox.checked) {
+                    var roomNumber = row.getElementsByTagName("td")[0].innerHTML;
+                    var date = row.getElementsByTagName("td")[1].innerHTML;
+                    var start_time = row.getElementsByTagName("td")[2].getElementsByTagName("span")[0].innerHTML;
+                    var seatCapacity = row.getElementsByTagName("td")[3].innerHTML;
+                    selectedRows.push({
+                        roomNumber: roomNumber,
+                        date: date,
+                        start_time: start_time,
+                        seatCapacity: seatCapacity
+                    });
+                }
+            }
+            console.log("mairebaap")
+
+            
+
+            // Send an HTTP request to the server-side script
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        console.log(xhr.responseText);
+                        console.log("send success!!!")
+                        location.href='useraccount.php'
+                        // Insertion successful, update the UI accordingly
+                    } else {
+                        console.error(xhr.statusText);
+                        console.log("send failed!!!")
+                        // Insertion failed, show an error message
+                    }
+                }
+            };
+            xhr.open("POST", "insertClassRoomBooking.php");
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.send(JSON.stringify(selectedRows));
+            console.log(selectedRows)
         }
     </script>
 </body>

@@ -146,7 +146,7 @@ if (!isset($_SESSION['user_id'])) {
         document.getElementById("popupContainer").style.display = "none";
     }
     function GoClassRoom(){
-        location.href='classRoomBooking.php'
+        location.href='classRoomBookings.php'
     }
 
 </script>

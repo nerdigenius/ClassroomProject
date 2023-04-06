@@ -3,43 +3,43 @@ include("config.php");
 // Start a session if it hasn't been started already
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
-  }
-  
-  // Check if the user is already logged in
-  if (isset($_SESSION['user_id'])) {
+}
+
+// Check if the user is already logged in
+if (isset($_SESSION['user_id'])) {
     // Redirect to profile page
     header('Location: useraccount.php');
     exit();
-  }
-  
-  // Check if the form was submitted
-  if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+}
+
+// Check if the form was submitted
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Collect user input
     $email = $_POST['email'];
     $password = $_POST['password'];
-  
+
     // Validate user credentials
     $sql = "SELECT * FROM user WHERE email = '$email' AND password = '$password'";
     // $link is the database connection variable
     $result = mysqli_query($link, $sql);
-  
+
     if (mysqli_num_rows($result) == 1) {
-      // Login successful
-      $user = mysqli_fetch_assoc($result);
-  
-      // Store user data in session variables
-      $_SESSION['user_id'] = $user['id'];
-      $_SESSION['user_name'] = $user['name'];
-      $_SESSION['user_email'] = $user['email'];
-  
-      // Redirect to profile page
-      header('Location: useraccount.php');
-      exit();
+        // Login successful
+        $user = mysqli_fetch_assoc($result);
+
+        // Store user data in session variables
+        $_SESSION['user_id'] = $user['id'];
+        $_SESSION['user_name'] = $user['name'];
+        $_SESSION['user_email'] = $user['email'];
+
+        // Redirect to profile page
+        header('Location: useraccount.php');
+        exit();
     } else {
-      // Login failed
-      echo "<script>alert('Invalid email or password. Please try again.');</script>";
+        // Login failed
+        echo "<script>alert('Invalid email or password. Please try again.');</script>";
     }
-  }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -53,7 +53,8 @@ if (session_status() == PHP_SESSION_NONE) {
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
 </head>
 
-<body id="particles-js">
+<body>
+    <div id="particles-js" style="position: absolute;height:100%;width:100%;margin:0;display:flex;"></div>
     <script src="http://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script src="http://threejs.org/examples/js/libs/stats.min.js"></script>
 
@@ -97,8 +98,8 @@ if (session_status() == PHP_SESSION_NONE) {
     </div>
 </body>
 <script>
-    function Signup(){
-        location.href='signup.php'
+    function Signup() {
+        location.href = 'signup.php'
     }
 </script>
 <script src="particle.js"></script>
