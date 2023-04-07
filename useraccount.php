@@ -42,10 +42,11 @@ if (!isset($_SESSION['user_id'])) {
     <div class="userAccount">
         <div class="userinfo">
             <img src="userAccount.svg" class="userIcon" alt="">
-            <div style="margin-left: 5px;">
-                <p><?php echo $user_email ?></p>
-                <p><?php echo $user_name ?></p>
-                <form action="logout.php" method="POST" style="width: fit-content;"><button type="submit" style="width: 100px">Logout</button></form>
+            <div style="margin-left: 20px;display:flex;flex-direction:column;justify-content: space-evenly;">
+                <span class="username">Username: <?php echo $user_name ?></span>
+                <button href="resetPassword.php" style="width: 200px;margin-bottom:10px">Reset Password</button>
+                <form action="logout.php" method="POST" style="width: fit-content;"><button type="submit" style="width: 200px">Logout</button></form>
+                
             </div>
         </div>
         <div>

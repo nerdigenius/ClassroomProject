@@ -4,12 +4,10 @@ include("config.php");
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
-
+$email="";
 // Check if the user is already logged in
 if (isset($_SESSION['user_id'])) {
-    // Redirect to profile page
-    header('Location: useraccount.php');
-    exit();
+    $email= $_SESSION['user_email'];
 }
 ?>
 <!DOCTYPE html>
@@ -35,14 +33,10 @@ if (isset($_SESSION['user_id'])) {
 
         <div style="width: 100%; display: flex; justify-content: center; height: auto;padding:5% 20%" class="signupItems">
             <div class="loginform">
-                <p class="textTop">Signup</p>
+                <p class="textTop">Reset Password</p>
                 <div class="form-group">
-                    <input type="email" id="email" class="form-control" placeholder=" " name="email" />
+                    <input type="email" id="email" class="form-control" placeholder=" " name="email" value="<?php echo $email ?>"/>
                     <label for="email" class="form-label">Email</label>
-                </div>
-                <div class="form-group">
-                    <input type="text" id="name" class="form-control" placeholder=" " name="name" />
-                    <label for="name" class="form-label">Name</label>
                 </div>
                 <div class="form-group">
                     <input type="password" id="password" class="form-control" placeholder=" " name="password" />
@@ -77,14 +71,12 @@ if (isset($_SESSION['user_id'])) {
 
     function validate() {
         var selectedRows = [];
-        let username = document.getElementById("name").value;
         let password = document.getElementById("password").value;
         let email = document.getElementById("email").value;
         let retype_password = document.getElementById("retype_password").value;
-        if (username != "" && password != "" && retype_password != "" && email != "") {
+        if ( password != "" && retype_password != "" && email != "") {
             if (isValidEmail(email)) {
                 selectedRows.push({
-                    username: username,
                     password: password,
                     retype_password: retype_password,
                     email:email
@@ -105,7 +97,7 @@ if (isset($_SESSION['user_id'])) {
                             window.alert(response['message'])
                            }
                             
-                            //console.log(xhr.responseText)
+                            // console.log(xhr.responseText)
                             //location.href = 'useraccount.php'
                             // Insertion successful, update the UI accordingly
 
@@ -116,7 +108,7 @@ if (isset($_SESSION['user_id'])) {
                         }
                     }
                 };
-                xhr.open("POST", "signupValidation.php");
+                xhr.open("POST", "updatePassword.php");
                 xhr.setRequestHeader("Content-Type", "application/json");
                 xhr.send(JSON.stringify(selectedRows));
                 console.log(selectedRows)
