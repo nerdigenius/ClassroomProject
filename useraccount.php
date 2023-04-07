@@ -132,7 +132,7 @@ if (!isset($_SESSION['user_id'])) {
             
             <div style="display: flex;justify-content:space-evenly">
             <button class="popupButton" id="ClassRoomBtn" onclick="GoClassRoom()">Classroom</button>
-            <button class="popupButton" id="SeatsBtn">Seats</button>
+            <button class="popupButton" id="SeatsBtn" onclick="GoSeats()">Seats</button>
             </div>
             
         </div>
@@ -147,6 +147,9 @@ if (!isset($_SESSION['user_id'])) {
     }
     function GoClassRoom(){
         location.href='classRoomBookings.php'
+    }
+    function GoSeats(){
+        location.href='seatBookings.php'
     }
 
 </script>
