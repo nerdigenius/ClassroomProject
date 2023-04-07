@@ -30,7 +30,7 @@ if (!isset($_SESSION['user_id'])) {
     <title>ClassRoomBooking</title>
 </head>
 
-<body >
+<body>
     <div id="particles-js" style="position: absolute;height:100%;width:100%;margin:0;display:flex;"></div>
     <script src="http://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script src="http://threejs.org/examples/js/libs/stats.min.js"></script>
@@ -48,76 +48,58 @@ if (!isset($_SESSION['user_id'])) {
                 <form action="logout.php" method="POST" style="width: fit-content;"><button type="submit" style="width: 100px">Logout</button></form>
             </div>
         </div>
-        <div >
+        <div>
             <span class="tableHeader">Booked Classrooms: </span>
-            <table>
-                <tr>
-                    <th>Room Number</th>
-                    <th>Date</th>
-                    <th>Time</th>
-                </tr>
-                <?php
-                include("config.php");
-                $sql = "SELECT * FROM `classroombookings` join `time_slots` on classroombookings.time_slot_id=time_slots.id where user_id='$user_id'";
-                $result = $link->query($sql);
-                if ($result->num_rows > 0) {
-                    while ($row = $result->fetch_assoc()) {
-                        echo "<tr><td>" . $row["id"] . "</td><td>" . $row["date"] . "</td><td>" . $row["start_time"] . " to " . $row["end_time"] . "</td><td style='border: 0; width:auto'><button class='buttonTable'>X</button></td></tr>";
+            <table id="classRoomTable">
+                <tbody style="height: fit-content;max-height:400px;">
+                    <tr>
+                        <th>Room Number</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                    </tr>
+                    <?php
+                    include("config.php");
+                    $sql = "SELECT * FROM `classroombookings` join `time_slots` on classroombookings.time_slot_id=time_slots.id where user_id='$user_id'";
+                    $result = $link->query($sql);
+                    if ($result->num_rows > 0) {
+                        $i = 0;
+                        while ($row = $result->fetch_assoc()) {
+                            echo "<tr id='row1" . $i . "'><td>" . $row["booked_item_id"] . "</td><td>" . $row["date"] . "</td><td>" . "<span>" . $row["start_time"] . "</span>" . " to " . $row["end_time"] . "</td><td style='border: 0; width:auto'><button class='buttonTable' onclick='DeleteClassroom(" . $i . ")'>X</button></td></tr>";
+                            $i++;
+                        }
+                    } else {
+                        echo "<tr><td colspan='3'>0 results</td></tr>";
                     }
-                } else {
-                    echo "0 results";
-                }
-                ?>
-                <tr>
-                    <td>4008</td>
-                    <td>12.10.24</td>
-                    <td>2:00 pm to 3:00 pm</td>
-                    <td style="border: 0; width:auto"><button class="buttonTable">X</button></td>
-                </tr>
-                <tr>
-                    <td>2018</td>
-                    <td>14.10.24</td>
-                    <td>11:00 am to 1:00 pm</td>
-                    <td style="border: 0; width:auto"><button class="buttonTable">X</button></td>
+                    ?>
+                </tbody>
 
-                </tr>
             </table>
         </div>
         <div>
             <span class="tableHeader">Booked Class Seats: </span>
-            <table>
-                <tr>
-                    <th>Seat Number</th>
-                    <th>Room Number</th>
-                    <th>Date</th>
-                    <th>Time</th>
-                </tr>
-                <?php
-                $sql = "SELECT * FROM `bookings` join `time_slots` on bookings.time_slot_id=time_slots.id join seats on bookings.booked_item_id =seats.id where user_id='$user_id'";
-                $result = $link->query($sql);
-                if ($result->num_rows > 0) {
-                    while ($row = $result->fetch_assoc()) {
-                        echo "<tr><td>" . $row["id"] . "</td><td>" . $row["room_number"] . "</td><td>" . $row["date"] . "</td><td>" . $row["start_time"] . " to " . $row["end_time"] . "</td><td style='border: 0; width:auto'><button class='buttonTable'>X</button></td></tr>";
+            <table id="SeatsTable">
+                <tbody style="height: fit-content;max-height:400px;">
+                    <tr>
+                        <th>Seat Number</th>
+                        <th>Room Number</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                    </tr>
+                    <?php
+                    $sql = "SELECT date,seats.seat_number,seats.room_number,time_slots.start_time,time_slots.end_time FROM `bookings` join seats on booked_item_id=seats.id join time_slots on time_slot_id=time_slots.id WHERE user_id='$user_id'";
+                    $result = $link->query($sql);
+                    if ($result->num_rows > 0) {
+                        $i = 0;
+                        while ($row = $result->fetch_assoc()) {
+                            echo "<tr id='row1" . $i . "'><td>" . $row["seat_number"] . "</td><td>" . $row["room_number"] . "</td><td>" . $row["date"] . "</td><td>" . "<span>" . $row["start_time"] . "</span>" . " to " . $row["end_time"] . "</td><td style='border: 0; width:auto'><button class='buttonTable' onclick='DeleteSeats(" . $i . ")'>X</button></td></tr>";
+                            $i++;
+                        }
+                    } else {
+                        echo "<tr><td colspan='4'>0 results</td></tr>";
                     }
-                } else {
-                    echo "0 results";
-                }
-                ?>
-                <tr>
-                    <td>6</td>
-                    <td>6008</td>
-                    <td>12.10.24</td>
-                    <td>2:00 pm to 3:00 pm</td>
-                    <td style="border: 0; width:auto"><button class="buttonTable">X</button></td>
-                </tr>
-                <tr>
-                    <td>9</td>
-                    <td>2018</td>
-                    <td>14.10.24</td>
-                    <td>11:00 am to 1:00 pm</td>
-                    <td style="border: 0; width:auto"><button class="buttonTable">X</button></td>
+                    ?>
+                </tbody>
 
-                </tr>
             </table>
         </div>
         <div style="display:flex;margin-top: 20px;justify-content:flex-end;width:100%">
@@ -129,29 +111,120 @@ if (!isset($_SESSION['user_id'])) {
     <div class="popupContainer" id="popupContainer" onclick="popupClose()">
         <div class="popup">
             <span class="popupSpan">What kind of bookings do you want to make?</span>
-            
+
             <div style="display: flex;justify-content:space-evenly">
-            <button class="popupButton" id="ClassRoomBtn" onclick="GoClassRoom()">Classroom</button>
-            <button class="popupButton" id="SeatsBtn" onclick="GoSeats()">Seats</button>
+                <button class="popupButton" id="ClassRoomBtn" onclick="GoClassRoom()">Classroom</button>
+                <button class="popupButton" id="SeatsBtn" onclick="GoSeats()">Seats</button>
             </div>
-            
+
         </div>
     </div>
 </body>
 <script>
-    function popup(){
+    function popup() {
         document.getElementById("popupContainer").style.display = "flex";
     }
-    function popupClose(){
+
+    function popupClose() {
         document.getElementById("popupContainer").style.display = "none";
     }
-    function GoClassRoom(){
-        location.href='classRoomBookings.php'
-    }
-    function GoSeats(){
-        location.href='seatBookings.php'
+
+    function GoClassRoom() {
+        location.href = 'classRoomBookings.php'
     }
 
+    function GoSeats() {
+        location.href = 'seatBookings.php'
+    }
+
+    function DeleteSeats(id) {
+        var selectedRows = [];
+        var classroomTable = document.querySelector("#SeatsTable");
+        var row = classroomTable.querySelector("#row1" + id);
+        var seat_number = row.getElementsByTagName("td")[0].innerHTML;
+        var roomNumber = row.getElementsByTagName("td")[1].innerHTML;
+        var date = row.getElementsByTagName("td")[2].innerHTML;
+        var start_time = row.getElementsByTagName("td")[3].getElementsByTagName("span")[0].innerHTML;
+        selectedRows.push({
+            seat_number: seat_number,
+            roomNumber: roomNumber,
+            date: date,
+            start_time: start_time,
+        });
+
+        console.log(selectedRows);
+
+
+        // Send an HTTP request to the server-side script
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 200) {
+                    var response = JSON.parse(xhr.responseText);
+                    console.log(response['success']);
+                    // console.log("send success!!!")
+                    if (response['success'] === true) {
+                        row.remove();
+                    }
+                    //console.log(xhr.responseText)
+                    //location.href = 'useraccount.php'
+                    // Insertion successful, update the UI accordingly
+
+                } else {
+                    console.error(xhr.statusText);
+                    console.log("send failed!!!")
+                    // Insertion failed, show an error message
+                }
+            }
+        };
+        xhr.open("POST", "DeleteSeats.php");
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.send(JSON.stringify(selectedRows));
+        console.log(selectedRows)
+    }
+
+    function DeleteClassroom(id) {
+        var selectedRows = [];
+        var classroomTable = document.querySelector("#classRoomTable");
+        var row = classroomTable.querySelector("#row1" + id);
+        var roomNumber = row.getElementsByTagName("td")[0].innerHTML;
+        var date = row.getElementsByTagName("td")[1].innerHTML;
+        var start_time = row.getElementsByTagName("td")[2].getElementsByTagName("span")[0].innerHTML;
+        selectedRows.push({
+            roomNumber: roomNumber,
+            date: date,
+            start_time: start_time,
+        });
+
+        console.log(selectedRows);
+
+
+        // Send an HTTP request to the server-side script
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 200) {
+                    var response = JSON.parse(xhr.responseText);
+                    console.log(response['success']);
+                    console.log("send success!!!")
+                    if (response['success'] === true) {
+                        row.remove();
+                    }
+                    //location.href = 'useraccount.php'
+                    // Insertion successful, update the UI accordingly
+
+                } else {
+                    console.error(xhr.statusText);
+                    console.log("send failed!!!")
+                    // Insertion failed, show an error message
+                }
+            }
+        };
+        xhr.open("POST", "DeleteClassRoom.php");
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.send(JSON.stringify(selectedRows));
+        console.log(selectedRows)
+    }
 </script>
 <script src="particle.js"></script>
 

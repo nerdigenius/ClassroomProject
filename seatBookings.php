@@ -93,21 +93,21 @@ if (!isset($_SESSION['user_id'])) {
                         for (let i = 0; i < data.length; i++) {
                             if (data[i].status === "booked") {
                                 row = "<tr>" +
-                                    "<td style='background-color: grey;' id='row1" + i + "'>" + data[i].room_number + "</td>" +
-                                    "<td style='background-color: grey;' id='row2" + i + "'>" + data[i].seat_number + "</td>" +
-                                    "<td style='background-color: grey;' id='row3" + i + "'>" + data[i].date + "</td>" +
-                                    "<td style='background-color: grey;' id='row4" + i + "'>" + "<span id='row31" + i + "'>" + data[i].start_time + "</span>" + " to " + data[i].end_time + "</td>" +
-                                    "<td style='background-color: grey;' id='row5" + i + "'>" + data[i].seat_capacity + "</td>" +
+                                    "<td style='background-color: grey;' id='row1room" + i + "'>" + data[i].room_number + "</td>" +
+                                    "<td style='background-color: grey;' id='row2seat" + i + "'>" + data[i].seat_number + "</td>" +
+                                    "<td style='background-color: grey;' id='row3date" + i + "'>" + data[i].date + "</td>" +
+                                    "<td style='background-color: grey;' id='row4time" + i + "'>" + "<span id='row31" + i + "'>" + data[i].start_time + "</span>" + " to " + data[i].end_time + "</td>" +
+                                    "<td style='background-color: grey;' id='row5seatCap" + i + "'>" + data[i].seat_capacity + "</td>" +
                                     "<td style='border: 0; width:auto'>" + "<input type='checkbox' name='' id='checkbox" + i + "'" + "onclick='toggleHighlight(" + i + ")' disabled>" + "</td>"
 
                                 "</tr>";
                             } else {
                                 row = "<tr>" +
-                                    "<td  id='row1" + i + "'>" + data[i].room_number + "</td>" +
-                                    "<td  id='row2" + i + "'>" + data[i].seat_number + "</td>" +
-                                    "<td  id='row3" + i + "'>" + data[i].date + "</td>" +
-                                    "<td  id='row4" + i + "'>" + "<span id='row31" + i + "'>" + data[i].start_time + "</span>" + " to " + data[i].end_time + "</td>" +
-                                    "<td  id='row5" + i + "'>" + data[i].seat_capacity + "</td>" +
+                                    "<td  id='row1room" + i + "'>" + data[i].room_number + "</td>" +
+                                    "<td  id='row2seat" + i + "'>" + data[i].seat_number + "</td>" +
+                                    "<td  id='row3date" + i + "'>" + data[i].date + "</td>" +
+                                    "<td  id='row4time" + i + "'>" + "<span id='row31" + i + "'>" + data[i].start_time + "</span>" + " to " + data[i].end_time + "</td>" +
+                                    "<td  id='row5seatCap" + i + "'>" + data[i].seat_capacity + "</td>" +
                                     "<td style='border: 0; width:auto'>" + "<input type='checkbox' name='' id='checkbox" + i + "'" + "onclick='toggleHighlight(" + i + ")'>" + "</td>"
 
                                 "</tr>";
@@ -132,17 +132,17 @@ if (!isset($_SESSION['user_id'])) {
         function toggleHighlight(id) {
             var checkbox = document.getElementById("checkbox" + id);
             if (checkbox.checked) {
-                document.getElementById("row1" + id).classList.add("highlighted");
-                document.getElementById("row2" + id).classList.add("highlighted");
-                document.getElementById("row3" + id).classList.add("highlighted");
-                document.getElementById("row4" + id).classList.add("highlighted");
-                document.getElementById("row5" + id).classList.add("highlighted");
+                document.getElementById("row1room" + id).classList.add("highlighted");
+                document.getElementById("row2seat" + id).classList.add("highlighted");
+                document.getElementById("row3date" + id).classList.add("highlighted");
+                document.getElementById("row4time" + id).classList.add("highlighted");
+                document.getElementById("row5seatCap" + id).classList.add("highlighted");
             } else {
-                document.getElementById("row1" + id).classList.remove("highlighted");
-                document.getElementById("row2" + id).classList.remove("highlighted");
-                document.getElementById("row3" + id).classList.remove("highlighted");
-                document.getElementById("row4" + id).classList.remove("highlighted");
-                document.getElementById("row5" + id).classList.remove("highlighted");
+                document.getElementById("row1room" + id).classList.remove("highlighted");
+                document.getElementById("row2seat" + id).classList.remove("highlighted");
+                document.getElementById("row3date" + id).classList.remove("highlighted");
+                document.getElementById("row4time" + id).classList.remove("highlighted");
+                document.getElementById("row5seatCap" + id).classList.remove("highlighted");
             }
         }
 
@@ -168,7 +168,6 @@ if (!isset($_SESSION['user_id'])) {
                     });
                 }
             }
-            console.log("mairebaap")
 
             
 
@@ -179,7 +178,7 @@ if (!isset($_SESSION['user_id'])) {
                     if (xhr.status === 200) {
                         console.log(xhr.responseText);
                         console.log("send success!!!")
-                        // location.href='useraccount.php'
+                        location.href='useraccount.php'
                         // Insertion successful, update the UI accordingly
                     } else {
                         console.error(xhr.statusText);

@@ -48,7 +48,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <title>ClassRoomBooking</title>
 </head>
 
-<body id="particles-js">
+<body>
+<div id="particles-js" style="position: absolute;height:100%;width:100%;margin:0;display:flex;"></div>
     <script src="http://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script src="http://threejs.org/examples/js/libs/stats.min.js"></script>
     <div class="navbar">
@@ -73,15 +74,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <label for="password" class="form-label">Password</label>
                 </div>
                 <div class="form-group">
-                    <input type="password" id="retype_password" class="form-control" placeholder=" " />
+                    <input type="password" id="retype_password" class="form-control" placeholder=" " onkeyup="TextCheck()"/>
                     <label for="retype_password" class="form-label">Re-type Password</label>
                 </div>
+                <span style="color: red;display:none" id="error">Password does not match</span>
                 <button style="width: 100%;" type="submit">Submit</button>
 
             </form>
         </div>
     </div>
 </body>
-
+<script>
+    function TextCheck(){
+        let password = document.getElementById('password').value;
+        let retype_password = document.getElementById('retype_password').value;
+        if(password===retype_password){
+            document.getElementById('error').style.display = 'none';
+        }
+        else{
+            document.getElementById('error').style.display = 'block';
+        }
+    }
+</script>
 </html>
 <script src="particle.js"></script>

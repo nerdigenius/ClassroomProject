@@ -91,19 +91,19 @@ if (!isset($_SESSION['user_id'])) {
                         for (let i = 0; i < data.length; i++) {
                             if (data[i].status === "booked") {
                                 row = "<tr>" +
-                                    "<td style='background-color: grey;' id='row1" + i + "'>" + data[i].id + "</td>" +
-                                    "<td style='background-color: grey;' id='row2" + i + "'>" + data[i].date + "</td>" +
-                                    "<td style='background-color: grey;' id='row3" + i + "'>" + "<span id='row31" + i + "'>" + data[i].start_time + "</span>" + " to " + data[i].end_time + "</td>" +
-                                    "<td style='background-color: grey;' id='row4" + i + "'>" + data[i].seat_capacity + "</td>" +
+                                    "<td style='background-color: grey;' id='row1id" + i + "'>" + data[i].id + "</td>" +
+                                    "<td style='background-color: grey;' id='row2date" + i + "'>" + data[i].date + "</td>" +
+                                    "<td style='background-color: grey;' id='row3time" + i + "'>" + "<span id='row31" + i + "'>" + data[i].start_time + "</span>" + " to " + data[i].end_time + "</td>" +
+                                    "<td style='background-color: grey;' id='row4seats" + i + "'>" + data[i].seat_capacity + "</td>" +
                                     "<td style='border: 0; width:auto'>" + "<input type='checkbox' name='' id='checkbox" + i + "'" + "onclick='toggleHighlight(" + i + ")' disabled>" + "</td>"
 
                                 "</tr>";
                             } else {
                                 row = "<tr>" +
-                                    "<td id='row1" + i + "'>" + data[i].id + "</td>" +
-                                    "<td id='row2" + i + "'>" + data[i].date + "</td>" +
-                                    "<td id='row3" + i + "'>" + "<span id='row31" + i + "'>" + data[i].start_time + "</span>" + " to " + data[i].end_time + "</td>" +
-                                    "<td id='row4" + i + "'>" + data[i].seat_capacity + "</td>" +
+                                    "<td id='row1id" + i + "'>" + data[i].id + "</td>" +
+                                    "<td id='row2date" + i + "'>" + data[i].date + "</td>" +
+                                    "<td id='row3time" + i + "'>" + "<span id='row31" + i + "'>" + data[i].start_time + "</span>" + " to " + data[i].end_time + "</td>" +
+                                    "<td id='row4seats" + i + "'>" + data[i].seat_capacity + "</td>" +
                                     "<td style='border: 0; width:auto'>" + "<input type='checkbox' name='' id='checkbox" + i + "'" + "onclick='toggleHighlight(" + i + ")'>" + "</td>"
                                 "</tr>";
                             }
@@ -127,15 +127,15 @@ if (!isset($_SESSION['user_id'])) {
         function toggleHighlight(id) {
             var checkbox = document.getElementById("checkbox" + id);
             if (checkbox.checked) {
-                document.getElementById("row1" + id).classList.add("highlighted");
-                document.getElementById("row2" + id).classList.add("highlighted");
-                document.getElementById("row3" + id).classList.add("highlighted");
-                document.getElementById("row4" + id).classList.add("highlighted");
+                document.getElementById("row1id" + id).classList.add("highlighted");
+                document.getElementById("row2date" + id).classList.add("highlighted");
+                document.getElementById("row3time" + id).classList.add("highlighted");
+                document.getElementById("row4seats" + id).classList.add("highlighted");
             } else {
-                document.getElementById("row1" + id).classList.remove("highlighted");
-                document.getElementById("row2" + id).classList.remove("highlighted");
-                document.getElementById("row3" + id).classList.remove("highlighted");
-                document.getElementById("row4" + id).classList.remove("highlighted");
+                document.getElementById("row1id" + id).classList.remove("highlighted");
+                document.getElementById("row2date" + id).classList.remove("highlighted");
+                document.getElementById("row3time" + id).classList.remove("highlighted");
+                document.getElementById("row4seats" + id).classList.remove("highlighted");
             }
         }
 
@@ -159,7 +159,6 @@ if (!isset($_SESSION['user_id'])) {
                     });
                 }
             }
-            console.log("mairebaap")
 
             
 
