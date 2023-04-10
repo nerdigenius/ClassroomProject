@@ -5,9 +5,11 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 $email="";
+$disabled="";
 // Check if the user is already logged in
 if (isset($_SESSION['user_id'])) {
     $email= $_SESSION['user_email'];
+    $disabled="disabled";
 }
 ?>
 <!DOCTYPE html>
@@ -35,7 +37,7 @@ if (isset($_SESSION['user_id'])) {
             <div class="loginform">
                 <p class="textTop">Reset Password</p>
                 <div class="form-group">
-                    <input type="email" id="email" class="form-control" placeholder=" " name="email" value="<?php echo $email ?>"/>
+                    <input type="email" id="email" class="form-control" placeholder=" " name="email" value="<?php echo $email ?>" <?php echo $disabled ?>/>
                     <label for="email" class="form-label">Email</label>
                 </div>
                 <div class="form-group">
