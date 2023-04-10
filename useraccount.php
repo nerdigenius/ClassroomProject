@@ -44,7 +44,7 @@ if (!isset($_SESSION['user_id'])) {
             <img src="userAccount.svg" class="userIcon" alt="">
             <div style="margin-left: 20px;display:flex;flex-direction:column;justify-content: space-evenly;">
                 <span class="username">Username: <?php echo $user_name ?></span>
-                <button href="resetPassword.php" style="width: 200px;margin-bottom:10px">Reset Password</button>
+                <button onclick="resetPassword()" style="width: 200px;margin-bottom:10px">Reset Password</button>
                 <form action="logout.php" method="POST" style="width: fit-content;"><button type="submit" style="width: 200px">Logout</button></form>
                 
             </div>
@@ -137,7 +137,9 @@ if (!isset($_SESSION['user_id'])) {
     function GoSeats() {
         location.href = 'seatBookings.php'
     }
-
+    function resetPassword() {
+        location.href = 'resetPassword.php'
+    }
     function DeleteSeats(id) {
         var selectedRows = [];
         var classroomTable = document.querySelector("#SeatsTable");
