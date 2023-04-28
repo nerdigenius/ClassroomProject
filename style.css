@@ -272,6 +272,7 @@ h1 {
 }
 .highlighted{
   background-color: #3a3fc1;
+  color: white;
 }
 
 @media only screen and (max-width: 768px) {
