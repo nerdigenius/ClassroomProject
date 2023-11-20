@@ -36,7 +36,7 @@ foreach ($data as $row) {
   $time_slot_result = mysqli_query($link, $time_slot_query);
   $time_slot_row = mysqli_fetch_assoc($time_slot_result);
   $time_slot_id = $time_slot_row['id'];
-  $id_query = "SELECT `id` FROM `seats` WHERE room_number =1 and seat_number=1";
+  $id_query = "SELECT `id` FROM `seats` WHERE room_number =$roomNumber and seat_number=$seat_number";
   $id_result = mysqli_query($link, $id_query);
   $id_row = mysqli_fetch_assoc($id_result);
   $id= $id_row['id'];

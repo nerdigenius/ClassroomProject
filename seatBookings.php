@@ -170,7 +170,7 @@ if (!isset($_SESSION['user_id'])) {
             }
 
             
-
+            
             //Send an HTTP request to the server-side script
             var xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function() {

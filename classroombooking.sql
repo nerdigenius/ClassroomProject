@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.1.1
+-- version 5.2.0
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Mar 26, 2023 at 05:16 PM
--- Server version: 5.7.36
--- PHP Version: 7.4.26
+-- Generation Time: Nov 20, 2023 at 07:14 PM
+-- Server version: 8.0.31
+-- PHP Version: 8.0.26
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -29,24 +29,24 @@ SET time_zone = "+00:00";
 
 DROP TABLE IF EXISTS `bookings`;
 CREATE TABLE IF NOT EXISTS `bookings` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `user_id` int(11) NOT NULL,
-  `booked_item_id` int(11) NOT NULL,
-  `time_slot_id` int(11) NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL,
+  `booked_item_id` int NOT NULL,
+  `time_slot_id` int NOT NULL,
   `date` date NOT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   KEY `booked_item_id` (`booked_item_id`),
   KEY `time_slot_id` (`time_slot_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=46 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `bookings`
 --
 
 INSERT INTO `bookings` (`id`, `user_id`, `booked_item_id`, `time_slot_id`, `date`) VALUES
-(1, 2, 44, 8, '2023-04-04'),
-(2, 1, 7, 4, '2023-04-12');
+(44, 1, 1, 9, '2023-11-21'),
+(45, 1, 44, 2, '2023-11-21');
 
 -- --------------------------------------------------------
 
@@ -56,8 +56,8 @@ INSERT INTO `bookings` (`id`, `user_id`, `booked_item_id`, `time_slot_id`, `date
 
 DROP TABLE IF EXISTS `classroom`;
 CREATE TABLE IF NOT EXISTS `classroom` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `seat_capacity` int(50) NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `seat_capacity` int NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=latin1;
 
@@ -113,23 +113,23 @@ INSERT INTO `classroom` (`id`, `seat_capacity`) VALUES
 
 DROP TABLE IF EXISTS `classroombookings`;
 CREATE TABLE IF NOT EXISTS `classroombookings` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `user_id` int(11) NOT NULL,
-  `booked_item_id` int(11) NOT NULL,
-  `time_slot_id` int(11) NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL,
+  `booked_item_id` int NOT NULL,
+  `time_slot_id` int NOT NULL,
   `date` date NOT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   KEY `booked_item_id` (`booked_item_id`),
   KEY `time_slot_id` (`time_slot_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `classroombookings`
 --
 
 INSERT INTO `classroombookings` (`id`, `user_id`, `booked_item_id`, `time_slot_id`, `date`) VALUES
-(1, 1, 3, 3, '2023-04-06');
+(2, 1, 1, 9, '2023-11-20');
 
 -- --------------------------------------------------------
 
@@ -139,61 +139,60 @@ INSERT INTO `classroombookings` (`id`, `user_id`, `booked_item_id`, `time_slot_i
 
 DROP TABLE IF EXISTS `seats`;
 CREATE TABLE IF NOT EXISTS `seats` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `room_number` int(11) NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `room_number` int NOT NULL,
+  `seat_number` int NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=46 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=453 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `seats`
 --
 
-INSERT INTO `seats` (`id`, `room_number`) VALUES
-(1, 1),
-(2, 1),
-(3, 1),
-(4, 1),
-(5, 1),
-(6, 1),
-(7, 1),
-(8, 1),
-(9, 1),
-(10, 1),
-(11, 1),
-(12, 1),
-(13, 1),
-(14, 1),
-(15, 1),
-(16, 1),
-(17, 1),
-(18, 1),
-(19, 1),
-(20, 1),
-(21, 1),
-(22, 1),
-(23, 2),
-(24, 2),
-(25, 2),
-(26, 2),
-(27, 2),
-(28, 2),
-(29, 2),
-(30, 2),
-(31, 2),
-(32, 2),
-(33, 2),
-(34, 2),
-(35, 2),
-(36, 2),
-(37, 2),
-(38, 2),
-(39, 2),
-(40, 2),
-(41, 2),
-(42, 2),
-(43, 2),
-(44, 2),
-(45, 2);
+INSERT INTO `seats` (`id`, `room_number`, `seat_number`) VALUES
+(1, 1, 1),
+(2, 1, 2),
+(3, 1, 3),
+(4, 1, 4),
+(5, 1, 5),
+(6, 1, 6),
+(7, 1, 7),
+(8, 1, 8),
+(9, 1, 9),
+(10, 1, 10),
+(11, 1, 11),
+(12, 1, 12),
+(13, 1, 13),
+(14, 1, 14),
+(15, 1, 15),
+(16, 1, 16),
+(17, 1, 17),
+(18, 1, 18),
+(19, 1, 19),
+(20, 1, 20),
+(21, 1, 21),
+(22, 1, 22),
+(24, 2, 1),
+(25, 2, 2),
+(26, 2, 3),
+(27, 2, 4),
+(28, 2, 5),
+(29, 2, 6),
+(30, 2, 7),
+(31, 2, 8),
+(32, 2, 9),
+(33, 2, 10),
+(34, 2, 11),
+(35, 2, 12),
+(36, 2, 13),
+(37, 2, 14),
+(38, 2, 15),
+(39, 2, 16),
+(40, 2, 17),
+(41, 2, 18),
+(42, 2, 19),
+(43, 2, 20),
+(44, 2, 21);
 
 -- --------------------------------------------------------
 
@@ -203,7 +202,7 @@ INSERT INTO `seats` (`id`, `room_number`) VALUES
 
 DROP TABLE IF EXISTS `time_slots`;
 CREATE TABLE IF NOT EXISTS `time_slots` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int NOT NULL AUTO_INCREMENT,
   `start_time` time NOT NULL,
   `end_time` time NOT NULL,
   PRIMARY KEY (`id`)
@@ -232,13 +231,13 @@ INSERT INTO `time_slots` (`id`, `start_time`, `end_time`) VALUES
 
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE IF NOT EXISTS `user` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL,
   `email` varchar(50) NOT NULL,
   `password` varchar(50) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `user`
