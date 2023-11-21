@@ -107,7 +107,7 @@ if (!isset($_SESSION['user_id'])) {
                     // $sql = "SELECT date,seats.seat_number,seats.room_number,time_slots.start_time,time_slots.end_time FROM `bookings` join seats on booked_item_id=seats.id join time_slots on time_slot_id=time_slots.id WHERE user_id='$user_id'";
                     // $result = $link->query($sql);
 
-                    
+
                     // Prepare the SQL statement with placeholders
                     $sql = "SELECT date, seats.seat_number, seats.room_number, time_slots.start_time, time_slots.end_time 
                             FROM `bookings` 
@@ -180,13 +180,31 @@ if (!isset($_SESSION['user_id'])) {
     }
 
     function DeleteSeats(id) {
+
+        // "innerText" is used instead of innerHTML to retrieve the text content, which prevents any injected HTML from being executed.
+
         var selectedRows = [];
         var classroomTable = document.querySelector("#SeatsTable");
         var row = classroomTable.querySelector("#row1" + id);
-        var seat_number = row.getElementsByTagName("td")[0].innerHTML;
-        var roomNumber = row.getElementsByTagName("td")[1].innerHTML;
-        var date = row.getElementsByTagName("td")[2].innerHTML;
-        var start_time = row.getElementsByTagName("td")[3].getElementsByTagName("span")[0].innerHTML;
+        var seat_number = row.getElementsByTagName("td")[0].innerText.trim();
+        var roomNumber = row.getElementsByTagName("td")[1].innerText.trim();
+        var date = row.getElementsByTagName("td")[2].innerText.trim();
+        var start_time = row.getElementsByTagName("td")[3].getElementsByTagName("span")[0].innerText.trim();
+
+        // var selectedRows = [];
+        // var classroomTable = document.querySelector("#SeatsTable");
+        // var row = classroomTable.querySelector("#row1" + id);
+        // var seat_number = row.getElementsByTagName("td")[0].innerHTML;
+        // var roomNumber = row.getElementsByTagName("td")[1].innerHTML;
+        // var date = row.getElementsByTagName("td")[2].innerHTML;
+        // var start_time = row.getElementsByTagName("td")[3].getElementsByTagName("span")[0].innerHTML;
+
+        // Sanitized inputs  using encodeURIComponent to handle special characters
+        seat_number = encodeURIComponent(seat_number);
+        roomNumber = encodeURIComponent(roomNumber);
+        date = encodeURIComponent(date);
+        start_time = start_time;
+        
         selectedRows.push({
             seat_number: seat_number,
             roomNumber: roomNumber,
@@ -226,19 +244,41 @@ if (!isset($_SESSION['user_id'])) {
     }
 
     function DeleteClassroom(id) {
+
+                // "innerText" is used instead of innerHTML to retrieve the text content, which prevents any injected HTML from being executed.
         var selectedRows = [];
         var classroomTable = document.querySelector("#classRoomTable");
         var row = classroomTable.querySelector("#row1" + id);
-        var roomNumber = row.getElementsByTagName("td")[0].innerHTML;
-        var date = row.getElementsByTagName("td")[1].innerHTML;
-        var start_time = row.getElementsByTagName("td")[2].getElementsByTagName("span")[0].innerHTML;
+        var roomNumber = row.getElementsByTagName("td")[0].innerText;
+        var date = row.getElementsByTagName("td")[1].innerText;
+        var start_time = row.getElementsByTagName("td")[2].getElementsByTagName("span")[0].innerText;
+
+        // Sanitized inputs  using encodeURIComponent to handle special characters
+        roomNumber = encodeURIComponent(roomNumber);
+        date = encodeURIComponent(date);
+        start_time = start_time;
+
         selectedRows.push({
             roomNumber: roomNumber,
             date: date,
             start_time: start_time,
         });
 
+        // var selectedRows = [];
+        // var classroomTable = document.querySelector("#classRoomTable");
+        // var row = classroomTable.querySelector("#row1" + id);
+        // var roomNumber = row.getElementsByTagName("td")[0].innerHTML;
+        // var date = row.getElementsByTagName("td")[1].innerHTML;
+        // var start_time = row.getElementsByTagName("td")[2].getElementsByTagName("span")[0].innerHTML;
+        // selectedRows.push({
+        //     roomNumber: roomNumber,
+        //     date: date,
+        //     start_time: start_time,
+        // });
+
         console.log(selectedRows);
+
+     
 
 
         // Send an HTTP request to the server-side script
