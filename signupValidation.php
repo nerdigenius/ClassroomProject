@@ -16,8 +16,8 @@ $data = json_decode($json, true);
 foreach ($data as $row) {
     $name =trim($row['username']);
     $email = trim($row['email']);
-    $password = trim($row['password']);
-    $retype_password =trim($row['retype_password']);
+    $password =$row['password'];
+    $retype_password =$row['retype_password'];
 }
 
 

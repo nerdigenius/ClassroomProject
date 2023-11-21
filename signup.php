@@ -37,19 +37,19 @@ if (isset($_SESSION['user_id'])) {
             <div class="loginform">
                 <p class="textTop">Signup</p>
                 <div class="form-group">
-                    <input type="email" id="email" class="form-control" placeholder=" " name="email" />
+                    <input type="email" id="email" class="form-control" placeholder=" " name="email" required/>
                     <label for="email" class="form-label">Email</label>
                 </div>
                 <div class="form-group">
-                    <input type="text" id="name" class="form-control" placeholder=" " name="name" />
+                    <input type="text" id="name" class="form-control" placeholder=" " name="name" required/>
                     <label for="name" class="form-label">Name</label>
                 </div>
                 <div class="form-group">
-                    <input type="password" id="password" class="form-control" placeholder=" " name="password" />
+                    <input type="password" id="password" class="form-control" placeholder=" " name="password" required/>
                     <label for="password" class="form-label">Password</label>
                 </div>
                 <div class="form-group">
-                    <input type="password" id="retype_password" name="retype_password" class="form-control" placeholder=" " onkeyup="TextCheck()" />
+                    <input type="password" id="retype_password" name="retype_password" class="form-control" placeholder=" " onkeyup="TextCheck()" required/>
                     <label for="retype_password" class="form-label">Re-type Password</label>
                 </div>
                 <span style="color: red;display:none" id="error">Password does not match</span>

@@ -1,4 +1,7 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 include("config.php");
 // Start a session if it hasn't been started already
 if (session_status() == PHP_SESSION_NONE) {
@@ -19,26 +22,57 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $password = $_POST['password'];
 
     // Validate user credentials
-    $sql = "SELECT * FROM user WHERE email = '$email' AND password = '$password'";
-    // $link is the database connection variable
-    $result = mysqli_query($link, $sql);
+    $sql = "SELECT * FROM user WHERE email = ?";
+    
+    $stmt = $link->prepare($sql);
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    if ($result->num_rows == 1) {
+        $user = $result->fetch_assoc();
+        
+        // Compare entered password with stored hashed password
+        if (password_verify($password, trim($user['password']))) {
+            // Password matches, login successful
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['user_name'] = $user['name'];
+            $_SESSION['user_email'] = $user['email'];
 
-    if (mysqli_num_rows($result) == 1) {
-        // Login successful
-        $user = mysqli_fetch_assoc($result);
-
-        // Store user data in session variables
-        $_SESSION['user_id'] = $user['id'];
-        $_SESSION['user_name'] = $user['name'];
-        $_SESSION['user_email'] = $user['email'];
-
-        // Redirect to profile page
-        header('Location: useraccount.php');
-        exit();
-    } else {
-        // Login failed
-        echo "<script>alert('Invalid email or password. Please try again.');</script>";
+            // // Redirect to profile page
+            header('Location: useraccount.php');
+            exit();
+            
+        }
+        else {
+            // Incorrect Password failed
+            echo "<script>alert('Invalid password. Please try again.');</script>";
+        }
+    } 
+    else{
+        echo "<script>alert('There was an error');</script>";
     }
+
+    // $sql = "SELECT * FROM user WHERE email = '$email' AND password = '$password'";
+    // // $link is the database connection variable
+    // $result = mysqli_query($link, $sql);
+
+    // if (mysqli_num_rows($result) == 1) {
+    //     // Login successful
+    //     $user = mysqli_fetch_assoc($result);
+
+    //     // Store user data in session variables
+    //     $_SESSION['user_id'] = $user['id'];
+    //     $_SESSION['user_name'] = $user['name'];
+    //     $_SESSION['user_email'] = $user['email'];
+
+    //     // Redirect to profile page
+    //     header('Location: useraccount.php');
+    //     exit();
+    // } else {
+    //     // Login failed
+    //     echo "<script>alert('Invalid email or password. Please try again.');</script>";
+    // }
 }
 ?>
 <!DOCTYPE html>
