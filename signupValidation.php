@@ -20,7 +20,6 @@ foreach ($data as $row) {
     $retype_password =trim($row['retype_password']);
 }
 
-$sql = "INSERT INTO user (name, email, password) VALUES ('$name', '$email', '$password')";
 
 if ($name != "" and $email != "" and $password != "" and $retype_password != "") {
     if ($password === $retype_password) {
@@ -35,16 +34,18 @@ if ($name != "" and $email != "" and $password != "" and $retype_password != "")
             $_SESSION['user_id'] = mysqli_insert_id($link);
             $_SESSION['user_name'] = $name;
             $_SESSION['user_email'] = $email;
-
+            // Success response
             $response = array('success' => true, 'message' => 'SignUp successful');
             echo json_encode($response);
             exit();
         } else {
+            // Failure response for execution failure
             $response = array('success' => false, 'message' => 'SignUp failed at insert: ' . $stmt->error);
             echo json_encode($response);
         }
         $stmt->close();
     }else {
+        // Failure response for passwords not matching
         $response = array('success' => false, 'message' => 'Passwords do not match');
         echo json_encode($response);
     }
@@ -53,6 +54,7 @@ if ($name != "" and $email != "" and $password != "" and $retype_password != "")
 
 
 
+    // $sql = "INSERT INTO user (name, email, password) VALUES ('$name', '$email', '$password')";
 
     // if (mysqli_query($link, $sql)) {
     //     // Store user data in session variables
@@ -67,6 +69,7 @@ if ($name != "" and $email != "" and $password != "" and $retype_password != "")
     //     echo json_encode($response);
     // }
 } else {
+    // Failure response for empty fields
     $response = array('success' => false, 'message' => 'SignUp failed field left blank ');
     echo json_encode($response);
 }
