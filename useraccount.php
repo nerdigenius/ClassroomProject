@@ -46,7 +46,7 @@ if (!isset($_SESSION['user_id'])) {
                 <span class="username">Username: <?php echo $user_name ?></span>
                 <button onclick="resetPassword()" style="width: 200px;margin-bottom:10px">Reset Password</button>
                 <form action="logout.php" method="POST" style="width: fit-content;"><button type="submit" style="width: 200px">Logout</button></form>
-                
+
             </div>
         </div>
         <div>
@@ -60,8 +60,25 @@ if (!isset($_SESSION['user_id'])) {
                     </tr>
                     <?php
                     include("config.php");
-                    $sql = "SELECT * FROM `classroombookings` join `time_slots` on classroombookings.time_slot_id=time_slots.id where user_id='$user_id'";
-                    $result = $link->query($sql);
+                    // $sql = "SELECT * FROM `classroombookings` join `time_slots` on classroombookings.time_slot_id=time_slots.id where user_id='$user_id'";
+                    // $result = $link->query($sql);
+
+                    // Prepare the SQL statement with placeholders
+                    $sql = "SELECT * FROM `classroombookings` 
+                    JOIN `time_slots` ON classroombookings.time_slot_id = time_slots.id 
+                    WHERE user_id = ?";
+
+                    // Prepare the statement
+                    $stmt = $link->prepare($sql);
+
+                    // Bind the parameter
+                    $stmt->bind_param("i", $user_id); // Assuming user_id is an integer
+
+                    // Execute the query
+                    $stmt->execute();
+
+                    // Get the result
+                    $result = $stmt->get_result();
                     if ($result->num_rows > 0) {
                         $i = 0;
                         while ($row = $result->fetch_assoc()) {
@@ -87,8 +104,28 @@ if (!isset($_SESSION['user_id'])) {
                         <th>Time</th>
                     </tr>
                     <?php
-                    $sql = "SELECT date,seats.seat_number,seats.room_number,time_slots.start_time,time_slots.end_time FROM `bookings` join seats on booked_item_id=seats.id join time_slots on time_slot_id=time_slots.id WHERE user_id='$user_id'";
-                    $result = $link->query($sql);
+                    // $sql = "SELECT date,seats.seat_number,seats.room_number,time_slots.start_time,time_slots.end_time FROM `bookings` join seats on booked_item_id=seats.id join time_slots on time_slot_id=time_slots.id WHERE user_id='$user_id'";
+                    // $result = $link->query($sql);
+
+                    
+                    // Prepare the SQL statement with placeholders
+                    $sql = "SELECT date, seats.seat_number, seats.room_number, time_slots.start_time, time_slots.end_time 
+                            FROM `bookings` 
+                            JOIN seats ON booked_item_id = seats.id 
+                            JOIN time_slots ON time_slot_id = time_slots.id 
+                            WHERE user_id = ?";
+
+                    // Prepare the statement
+                    $stmt = $link->prepare($sql);
+
+                    // Bind the parameter
+                    $stmt->bind_param("i", $user_id); // Assuming user_id is an integer
+
+                    // Execute the query
+                    $stmt->execute();
+
+                    // Get the result
+                    $result = $stmt->get_result();
                     if ($result->num_rows > 0) {
                         $i = 0;
                         while ($row = $result->fetch_assoc()) {
@@ -137,9 +174,11 @@ if (!isset($_SESSION['user_id'])) {
     function GoSeats() {
         location.href = 'seatBookings.php'
     }
+
     function resetPassword() {
         location.href = 'resetPassword.php'
     }
+
     function DeleteSeats(id) {
         var selectedRows = [];
         var classroomTable = document.querySelector("#SeatsTable");
