@@ -23,18 +23,49 @@ foreach ($data as $row) {
 $sql = "INSERT INTO user (name, email, password) VALUES ('$name', '$email', '$password')";
 
 if ($name != "" and $email != "" and $password != "" and $retype_password != "") {
-    if (mysqli_query($link, $sql)) {
-        // Store user data in session variables
-        $_SESSION['user_id'] =  mysqli_insert_id($link);
-        $_SESSION['user_name'] = $name;
-        $_SESSION['user_email'] = $email;
-        $response = array('success' => true, 'message' => 'SignUp successful');
-        echo json_encode($response);
-        exit();
-    } else {
-        $response = array('success' => false, 'message' => 'SignUp failed at insert: ' . mysqli_error($link));
+    if ($password === $retype_password) {
+        // Hashed the password before storing
+        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+        // Using prepared statement to prevent SQL injection
+        $stmt = $link->prepare("INSERT INTO user (name, email, password) VALUES (?, ?, ?)");
+        $stmt->bind_param("sss", $name, $email, $hashed_password);
+
+        if ($stmt->execute()) {
+            // Store user data in session variables
+            $_SESSION['user_id'] = mysqli_insert_id($link);
+            $_SESSION['user_name'] = $name;
+            $_SESSION['user_email'] = $email;
+
+            $response = array('success' => true, 'message' => 'SignUp successful');
+            echo json_encode($response);
+            exit();
+        } else {
+            $response = array('success' => false, 'message' => 'SignUp failed at insert: ' . $stmt->error);
+            echo json_encode($response);
+        }
+        $stmt->close();
+    }else {
+        $response = array('success' => false, 'message' => 'Passwords do not match');
         echo json_encode($response);
     }
+
+
+
+
+
+
+    // if (mysqli_query($link, $sql)) {
+    //     // Store user data in session variables
+    //     $_SESSION['user_id'] =  mysqli_insert_id($link);
+    //     $_SESSION['user_name'] = $name;
+    //     $_SESSION['user_email'] = $email;
+    //     $response = array('success' => true, 'message' => 'SignUp successful');
+    //     echo json_encode($response);
+    //     exit();
+    // } else {
+    //     $response = array('success' => false, 'message' => 'SignUp failed at insert: ' . mysqli_error($link));
+    //     echo json_encode($response);
+    // }
 } else {
     $response = array('success' => false, 'message' => 'SignUp failed field left blank ');
     echo json_encode($response);
