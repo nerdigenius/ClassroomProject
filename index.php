@@ -38,9 +38,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['user_name'] = $user['name'];
             $_SESSION['user_email'] = $user['email'];
-
+            $_SESSION['2FA_enabled'] = $user['2FA_enabled'];
+            if($user['2FA_enabled']==1){
+                header('Location: twoFactor.php'); 
+            }
+            else{
+                header('Location: useraccount.php');
+            }
             // // Redirect to profile page
-            header('Location: useraccount.php');
+            
             exit();
             
         }

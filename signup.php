@@ -37,22 +37,27 @@ if (isset($_SESSION['user_id'])) {
             <div class="loginform">
                 <p class="textTop">Signup</p>
                 <div class="form-group">
-                    <input type="email" id="email" class="form-control" placeholder=" " name="email" required/>
+                    <input type="email" id="email" class="form-control" placeholder=" " name="email" required />
                     <label for="email" class="form-label">Email</label>
                 </div>
                 <div class="form-group">
-                    <input type="text" id="name" class="form-control" placeholder=" " name="name" required/>
+                    <input type="text" id="name" class="form-control" placeholder=" " name="name" required />
                     <label for="name" class="form-label">Name</label>
                 </div>
                 <div class="form-group">
-                    <input type="password" id="password" class="form-control" placeholder=" " name="password" required/>
+                    <input type="password" id="password" class="form-control" placeholder=" " name="password" required />
                     <label for="password" class="form-label">Password</label>
                 </div>
                 <div class="form-group">
-                    <input type="password" id="retype_password" name="retype_password" class="form-control" placeholder=" " onkeyup="TextCheck()" required/>
+                    <input type="password" id="retype_password" name="retype_password" class="form-control" placeholder=" " onkeyup="TextCheck()" required />
                     <label for="retype_password" class="form-label">Re-type Password</label>
                 </div>
                 <span style="color: red;display:none" id="error">Password does not match</span>
+
+                <div class="form-group">
+                    <label for="enableAuthenticator" class="username" style="font-size: 18px;">Enable Authenticator?</label>
+                    <input type="checkbox" id="enableAuthenticator" name="enableAuthenticator" value="true" />
+                </div>
                 <button style="width: 100%;" onclick="validate()">Submit</button>
 
             </div>
@@ -81,30 +86,33 @@ if (isset($_SESSION['user_id'])) {
         let password = document.getElementById("password").value;
         let email = document.getElementById("email").value;
         let retype_password = document.getElementById("retype_password").value;
-        if (username != "" && password != "" && retype_password != "" && email != "") {
+        let enableAuthenticator = document.getElementById("enableAuthenticator").checked;
+
+        if (username != "" && password != "" && retype_password != "" && email != "" && password == retype_password) {
             if (isValidEmail(email)) {
                 selectedRows.push({
                     username: username,
                     password: password,
                     retype_password: retype_password,
-                    email:email
+                    email: email,
+                    enableAuthenticator: enableAuthenticator
                 });
                 console.log(selectedRows);
+
 
                 // Send an HTTP request to the server-side script
                 var xhr = new XMLHttpRequest();
                 xhr.onreadystatechange = function() {
                     if (xhr.readyState === XMLHttpRequest.DONE) {
                         if (xhr.status === 200) {
-                           var response = JSON.parse(xhr.responseText);
-                           console.log(response['success']);
-                           if(response.success){
-                            location.href = 'useraccount.php';
-                           }
-                           else{
-                            window.alert(response['message'])
-                           }
-                            
+                            var response = JSON.parse(xhr.responseText);
+                            console.log(response['success']);
+                            if (response.success) {
+                                location.href = enableAuthenticator?'genqrcode.php':'useraccount.php';
+                            } else {
+                                window.alert(response['message'])
+                            }
+
                             //console.log(xhr.responseText)
                             //location.href = 'useraccount.php'
                             // Insertion successful, update the UI accordingly
@@ -116,6 +124,7 @@ if (isset($_SESSION['user_id'])) {
                         }
                     }
                 };
+
                 xhr.open("POST", "signupValidation.php");
                 xhr.setRequestHeader("Content-Type", "application/json");
                 xhr.send(JSON.stringify(selectedRows));
@@ -124,7 +133,7 @@ if (isset($_SESSION['user_id'])) {
                 window.alert("Invalid Email!!!")
             }
         } else {
-            window.alert("Field left empty!!!");
+            window.alert("Field left empty or Password do not match !!!");
         }
 
     }

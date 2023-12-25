@@ -46,6 +46,9 @@ if (!isset($_SESSION['user_id'])) {
                 <span class="username">Username: <?php echo $user_name ?></span>
                 <button onclick="resetPassword()" style="width: 200px;margin-bottom:10px">Reset Password</button>
                 <form action="logout.php" method="POST" style="width: fit-content;"><button type="submit" style="width: 200px">Logout</button></form>
+                <?php if($_SESSION['2FA_enabled']==0){
+                    echo '<a href="genqrcode.php">Enable 2FA?</a>';
+                } ?>
 
             </div>
         </div>
