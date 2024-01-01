@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Nov 20, 2023 at 07:14 PM
+-- Generation Time: Jan 01, 2024 at 07:59 PM
 -- Server version: 8.0.31
 -- PHP Version: 8.0.26
 
@@ -38,15 +38,17 @@ CREATE TABLE IF NOT EXISTS `bookings` (
   KEY `user_id` (`user_id`),
   KEY `booked_item_id` (`booked_item_id`),
   KEY `time_slot_id` (`time_slot_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=46 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=54 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `bookings`
 --
 
 INSERT INTO `bookings` (`id`, `user_id`, `booked_item_id`, `time_slot_id`, `date`) VALUES
-(44, 1, 1, 9, '2023-11-21'),
-(45, 1, 44, 2, '2023-11-21');
+(48, 19, 1, 7, '2023-11-21'),
+(49, 19, 1, 6, '2023-11-21'),
+(52, 21, 1, 9, '2023-11-21'),
+(53, 21, 1, 8, '2023-11-21');
 
 -- --------------------------------------------------------
 
@@ -122,14 +124,15 @@ CREATE TABLE IF NOT EXISTS `classroombookings` (
   KEY `user_id` (`user_id`),
   KEY `booked_item_id` (`booked_item_id`),
   KEY `time_slot_id` (`time_slot_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `classroombookings`
 --
 
 INSERT INTO `classroombookings` (`id`, `user_id`, `booked_item_id`, `time_slot_id`, `date`) VALUES
-(2, 1, 1, 9, '2023-11-20');
+(5, 19, 1, 7, '2023-11-21'),
+(7, 21, 1, 8, '2023-11-21');
 
 -- --------------------------------------------------------
 
@@ -234,19 +237,20 @@ CREATE TABLE IF NOT EXISTS `user` (
   `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL,
   `email` varchar(50) NOT NULL,
-  `password` varchar(50) NOT NULL,
+  `password` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `secret_key` varchar(256) NOT NULL,
+  `2FA_enabled` tinyint(1) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `user`
 --
 
-INSERT INTO `user` (`id`, `name`, `email`, `password`) VALUES
-(1, 'ash', 'a@g.com', 'test1234'),
-(2, 'dash', 'c@t.com', '1234'),
-(3, 'dasher', 'asdh@g.com', '1234');
+INSERT INTO `user` (`id`, `name`, `email`, `password`, `secret_key`, `2FA_enabled`) VALUES
+(19, 'asdh@g.com', 'asdh@g.com', '1234', '', 0),
+(21, 'John', 'a@g.com', '$2y$10$HHUiqVMCF.IFOks9LdCBnOXO95lXr5ozycoLFuF8CNzo.dMcSj03a', 'YINMDB6PRSZEK4VK', 1);
 
 --
 -- Constraints for dumped tables
