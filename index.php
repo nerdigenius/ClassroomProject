@@ -2,7 +2,7 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-include("config.php");
+require_once __DIR__ . '/config/bootstrap.php';
 // Start a session if it hasn't been started already
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
@@ -95,8 +95,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <body>
     <div id="particles-js" style="position: absolute;height:100%;width:100%;margin:0;display:flex;"></div>
-    <script src="http://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-    <script src="http://threejs.org/examples/js/libs/stats.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="https://threejs.org/examples/js/libs/stats.min.js"></script>
 
     <div class="navbar">
         <img onclick="location.href='index.php';" src='logo.png' alt="My" class="appLogo">
@@ -132,16 +132,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
             <div style="width: 100%;display: flex;justify-content: space-evenly;align-items:center;flex-direction: column;height: 50%;">
                 <button id='login' type="submit" name="submit">Login</button>
-                <button id="signup" type="button" onclick="Signup()">Sign Up</button>
+                <button id="signup" type="submit" form="signup-form">Sign Up</button>
             </div>
         </form>
+        <form id="signup-form" action="signup.php" method="get"></form>
     </div>
 </body>
-<script>
+<!-- <script>
     function Signup() {
         location.href = 'signup.php'
     }
-</script>
+</script> -->
 <script src="particle.js"></script>
 
 </html>
