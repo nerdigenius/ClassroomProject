@@ -3,22 +3,19 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 require_once __DIR__ . '/config/bootstrap.php';
-// Start a session if it hasn't been started already
-if (session_status() == PHP_SESSION_NONE) {
-    session_start();
-}
+require_once __DIR__ . '/config/csrf.php';
 
-// Check if the user is already logged in
-if (isset($_SESSION['user_id'])) {
-    // Redirect to profile page
+// If already fully authenticated (incl. MFA), send to account
+if (!empty($_SESSION['user_id']) && !empty($_SESSION['mfa_passed'])) {
     header('Location: useraccount.php');
     exit();
 }
 
 // Check if the form was submitted
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    require_csrf();
     // Collect user input
-    $email = $_POST['email'];
+    $email    = strtolower(trim($_POST['email'] ?? ''));
     $password = $_POST['password'];
 
     // Validate user credentials
@@ -29,8 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $stmt->execute();
     $result = $stmt->get_result();
     
-    if ($result->num_rows == 1) {
-        $user = $result->fetch_assoc();
+    if ($user = $result->fetch_assoc()) {
         
         // Compare entered password with stored hashed password
         if (password_verify($password, trim($user['password']))) {
@@ -91,6 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <title>ClassRoomBooking</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <?php require_once __DIR__ . '/config/csrf.php'; echo csrf_meta(); ?>
 </head>
 
 <body>
@@ -117,6 +114,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
         </div>
         <form class="loginItems" method="post">
+            <?= csrf_field(); ?>
             <div style="width: 100%; display: flex; justify-content: center; height: 50%">
                 <div class="loginform">
                     <div class="form-group">

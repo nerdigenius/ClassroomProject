@@ -1,6 +1,8 @@
 <?php
 // config/csrf.php
 // Reusable (non-rotating) CSRF token with a TTL. Works for forms and AJAX.
+declare(strict_types=1);
+
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
