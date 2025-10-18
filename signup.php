@@ -6,10 +6,8 @@ if (session_status() == PHP_SESSION_NONE) {
 }
 
 // Check if the user is already logged in
-if (isset($_SESSION['user_id'])) {
-    // Redirect to profile page
-    header('Location: useraccount.php');
-    exit();
+if (!empty($_SESSION['user_id']) && !empty($_SESSION['mfa_passed'])) {
+    header('Location: useraccount.php'); exit();
 }
 ?>
 <!DOCTYPE html>

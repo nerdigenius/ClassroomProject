@@ -20,6 +20,17 @@ html {
   width: 100%;
   
 }
+
+.flash {
+  margin: 16px auto;
+  max-width: 520px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+}
+.flash.error { background:#fdecea; color:#b71c1c; border:1px solid #f5c6cb; }
+.flash.success { background:#e8f5e9; color:#1b5e20; border:1px solid #c8e6c9; }
+
 .textTop {
   font-family: "Comic Sans MS";
   color: #3a3fc1;

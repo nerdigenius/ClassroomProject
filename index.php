@@ -1,9 +1,18 @@
 <?php
+
+declare(strict_types=1);
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
+
 require_once __DIR__ . '/config/bootstrap.php';
 require_once __DIR__ . '/config/csrf.php';
+
+/**
+ * - bootstrap.php calls session_start() and defines $link (mysqli)
+ * - twoFactor.php will set $_SESSION['mfa_passed']=1 and (re)issue the final login
+ * - user table has UNIQUE email, columns: id, name, email, password, 2FA_enabled (TINYINT 0/1)
+ */
 
 // If already fully authenticated (incl. MFA), send to account
 if (!empty($_SESSION['user_id']) && !empty($_SESSION['mfa_passed'])) {
@@ -11,70 +20,89 @@ if (!empty($_SESSION['user_id']) && !empty($_SESSION['mfa_passed'])) {
     exit();
 }
 
+// Basic per-IP / per-session throttle (bump for failures only)
+$_SESSION['login_attempts'] = $_SESSION['login_attempts'] ?? 0;
+$_SESSION['login_last']     = $_SESSION['login_last']     ?? 0;
+
+function too_many_attempts(): bool
+{
+    // 5 attempts within 10 minutes -> throttle
+    return $_SESSION['login_attempts'] >= 5 && (time() - $_SESSION['login_last']) < 600;
+}
+
+function flash_and_redirect(string $type, string $text): void
+{
+    $_SESSION['flash'] = ['type' => $type, 'text' => $text];
+    header('Location: ' . ($_SERVER['REQUEST_URI'] ?? 'index.php'), true, 303); // PRG
+    exit();
+}
+
 // Check if the form was submitted
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     require_csrf();
+
+    if (too_many_attempts()) {
+        flash_and_redirect('error', 'Please try again later.');
+    }
     // Collect user input
     $email    = strtolower(trim($_POST['email'] ?? ''));
-    $password = $_POST['password'];
+    $password = (string)($_POST['password'] ?? '');
 
-    // Validate user credentials
-    $sql = "SELECT * FROM user WHERE email = ?";
-    
-    $stmt = $link->prepare($sql);
-    $stmt->bind_param("s", $email);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    
-    if ($user = $result->fetch_assoc()) {
-        
-        // Compare entered password with stored hashed password
-        if (password_verify($password, trim($user['password']))) {
-            // Password matches, login successful
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['user_name'] = $user['name'];
-            $_SESSION['user_email'] = $user['email'];
-            $_SESSION['2FA_enabled'] = $user['2FA_enabled'];
-            if($user['2FA_enabled']==1){
-                header('Location: twoFactor.php'); 
-            }
-            else{
-                header('Location: useraccount.php');
-            }
-            // // Redirect to profile page
-            
-            exit();
-            
-        }
-        else {
-            // Incorrect Password failed
-            echo "<script>alert('Invalid password. Please try again.');</script>";
-        }
-    } 
-    else{
-        echo "<script>alert('There was an error');</script>";
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL) || $password === '' || strlen($password) > 1024) {
+        $_SESSION['login_attempts']++;
+        $_SESSION['login_last'] = time();
+        flash_and_redirect('error', 'Invalid email or password.');
     }
 
-    // $sql = "SELECT * FROM user WHERE email = '$email' AND password = '$password'";
-    // // $link is the database connection variable
-    // $result = mysqli_query($link, $sql);
+    $sql = "SELECT id, name, email, password, `2FA_enabled` FROM user WHERE email = ? LIMIT 1";
+    $stmt = $link->prepare($sql);
+    if (!$stmt) {
+        error_log('Login prepare failed: ' . $link->error);
+        flash_and_redirect('error', 'Something went wrong. Please try again.');
+    }
 
-    // if (mysqli_num_rows($result) == 1) {
-    //     // Login successful
-    //     $user = mysqli_fetch_assoc($result);
+    $stmt->bind_param('s', $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $user   = $result ? $result->fetch_assoc() : null;
 
-    //     // Store user data in session variables
-    //     $_SESSION['user_id'] = $user['id'];
-    //     $_SESSION['user_name'] = $user['name'];
-    //     $_SESSION['user_email'] = $user['email'];
+    // Anti-enumeration: verify against a dummy hash if user not found
+    $dummy_hash = password_hash('not-the-password', PASSWORD_DEFAULT);
+    $hash_to_check = $user['password'] ?? $dummy_hash;
 
-    //     // Redirect to profile page
-    //     header('Location: useraccount.php');
-    //     exit();
-    // } else {
-    //     // Login failed
-    //     echo "<script>alert('Invalid email or password. Please try again.');</script>";
-    // }
+    if (!password_verify($password, trim((string)$hash_to_check)) || !$user) {
+        $_SESSION['login_attempts']++;
+        $_SESSION['login_last'] = time();
+        flash_and_redirect('error', 'Invalid email or password.');
+    }
+
+    if (password_needs_rehash($user['password'], PASSWORD_DEFAULT)) {
+        if ($upd = $link->prepare("UPDATE user SET password = ? WHERE id = ?")) {
+            $newHash = password_hash($password, PASSWORD_DEFAULT);
+            $uid = (int)$user['id'];
+            $upd->bind_param('si', $newHash, $uid);
+            $upd->execute();
+        }
+    }
+
+    // Success: reset throttle and harden session
+    $_SESSION['login_attempts'] = 0;
+    $_SESSION['login_last']     = time();
+    session_regenerate_id(true);
+
+    $_SESSION['user_id']      = (int)$user['id'];
+    $_SESSION['user_name']    = $user['name'];
+    $_SESSION['user_email']   = $user['email'];
+    $_SESSION['2FA_enabled']  = (int)$user['2FA_enabled'];
+
+    if (!empty($_SESSION['2FA_enabled'])) {
+        header('Location: twoFactor.php');
+        exit();
+    }
+
+    $_SESSION['mfa_passed'] = 1;
+    header('Location: useraccount.php');
+    exit();
 }
 ?>
 <!DOCTYPE html>
@@ -87,7 +115,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <title>ClassRoomBooking</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
-    <?php require_once __DIR__ . '/config/csrf.php'; echo csrf_meta(); ?>
+    <?php require_once __DIR__ . '/config/csrf.php';
+    echo csrf_meta(); ?>
 </head>
 
 <body>
@@ -99,6 +128,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <img onclick="location.href='index.php';" src='logo.png' alt="My" class="appLogo">
         <h1>ClassRoom Booking System</h1>
     </div>
+
+
 
     <div class="login">
         <div class="loginLogo">
@@ -114,6 +145,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
         </div>
         <form class="loginItems" method="post">
+            <?php if (!empty($_SESSION['flash'])): ?>
+                <?php $f = $_SESSION['flash'];
+                unset($_SESSION['flash']); ?>
+                <div class="flash <?= htmlspecialchars((string)$f['type'], ENT_QUOTES) ?>">
+                    <?= htmlspecialchars((string)$f['text'], ENT_QUOTES) ?>
+                </div>
+            <?php endif; ?>
             <?= csrf_field(); ?>
             <div style="width: 100%; display: flex; justify-content: center; height: 50%">
                 <div class="loginform">
@@ -130,17 +168,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
             <div style="width: 100%;display: flex;justify-content: space-evenly;align-items:center;flex-direction: column;height: 50%;">
                 <button id='login' type="submit" name="submit">Login</button>
-                <button id="signup" type="submit" form="signup-form">Sign Up</button>
+                <button id="signup" type="submit" formaction="signup.php" formmethod="get" formnovalidate>Sign Up</button>
+                    
             </div>
         </form>
         <form id="signup-form" action="signup.php" method="get"></form>
     </div>
 </body>
-<!-- <script>
-    function Signup() {
-        location.href = 'signup.php'
-    }
-</script> -->
+
 <script src="particle.js"></script>
 
 </html>
