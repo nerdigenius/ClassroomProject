@@ -14,10 +14,35 @@ require_once __DIR__ . '/config/csrf.php';
  * - user table has UNIQUE email, columns: id, name, email, password, 2FA_enabled (TINYINT 0/1)
  */
 
+//reset helper function
+
+function full_reset_session(): void {
+    $_SESSION = [];
+    if (ini_get('session.use_cookies')) {
+        $p = session_get_cookie_params();
+        setcookie(session_name(), '', time() - 42000, $p['path'], $p['domain'], $p['secure'], $p['httponly']);
+    }
+    session_destroy();
+    session_start();
+    session_regenerate_id(true);
+}
+
 // If already fully authenticated (incl. MFA), send to account
 if (!empty($_SESSION['user_id']) && !empty($_SESSION['mfa_passed'])) {
     header('Location: useraccount.php');
     exit();
+}
+
+// If user came back to the login page (GET) while in a partial state
+// (password OK, 2FA enabled, but MFA not yet passed) -> reset everything.
+if (
+    $_SERVER['REQUEST_METHOD'] === 'GET' &&
+    !empty($_SESSION['user_id']) &&
+    !empty($_SESSION['2FA_enabled']) &&
+    empty($_SESSION['mfa_passed'])
+) {
+    full_reset_session();
+    
 }
 
 // Basic per-IP / per-session throttle (bump for failures only)
@@ -128,7 +153,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <img onclick="location.href='index.php';" src='logo.png' alt="My" class="appLogo">
         <h1>ClassRoom Booking System</h1>
     </div>
-
 
 
     <div class="login">

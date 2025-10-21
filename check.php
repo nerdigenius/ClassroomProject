@@ -1,5 +1,7 @@
 <?php
-include("config.php");
+require_once __DIR__ . '/config/bootstrap.php';
+require_once __DIR__ . '/config/csrf.php';
+
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Access the posted data sent from the client-side
@@ -29,7 +31,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $stmt->bind_param("i", $user_id);
             $stmt->execute();
             $stmt->bind_result($secret);
-            
+
             if ($stmt->fetch()) {
                 // Include the necessary Google Authenticator files
                 include_once 'vendor/sonata-project/google-authenticator/src/FixedBitNotation.php';
@@ -39,8 +41,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 $g = new \Google\Authenticator\GoogleAuthenticator();
 
+                
+               
+
                 // Check the received code against the retrieved secret
                 if ($g->checkCode($secret, $code)) {
+
                     echo json_encode(['success' => true, 'message' => 'Code verification successful']);
                     // Perform further actions if the code is correct
                 } else {
