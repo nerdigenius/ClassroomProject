@@ -1,9 +1,8 @@
 <?php
-require_once __DIR__ . '/config/bootstrap.php';
+declare(strict_types=1);
 
-if (session_status() == PHP_SESSION_NONE) {
-    session_start();
-}
+require_once __DIR__ . '/config/bootstrap.php';
+require_once __DIR__ . '/config/csrf.php';
 
 // Check if the user is already logged in
 if (!empty($_SESSION['user_id']) && !empty($_SESSION['mfa_passed'])) {
@@ -17,14 +16,16 @@ if (!empty($_SESSION['user_id']) && !empty($_SESSION['mfa_passed'])) {
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <?= csrf_meta(); ?>
     <link rel="stylesheet" href="style.css">
     <title>ClassRoomBooking</title>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+      <script src="assets/js/signup.js" defer></script>
 </head>
 
 <body>
     <div id="particles-js" style="position: absolute;height:100%;width:100%;margin:0;display:flex;"></div>
-    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-    <script src="https://threejs.org/examples/js/libs/stats.min.js"></script>
+    
     <div class="navbar">
         <img onclick="location.href='index.php';" src='logo.png' alt="My" class="appLogo">
         <h1>ClassRoom Booking System</h1>
@@ -47,7 +48,7 @@ if (!empty($_SESSION['user_id']) && !empty($_SESSION['mfa_passed'])) {
                     <label for="password" class="form-label">Password</label>
                 </div>
                 <div class="form-group">
-                    <input type="password" id="retype_password" name="retype_password" class="form-control" placeholder=" " onkeyup="TextCheck()" required />
+                    <input type="password" id="retype_password" name="retype_password" class="form-control" placeholder=" "  required />
                     <label for="retype_password" class="form-label">Re-type Password</label>
                 </div>
                 <span style="color: red;display:none" id="error">Password does not match</span>
@@ -56,86 +57,13 @@ if (!empty($_SESSION['user_id']) && !empty($_SESSION['mfa_passed'])) {
                     <label for="enableAuthenticator" class="username" style="font-size: 18px;">Enable Authenticator?</label>
                     <input type="checkbox" id="enableAuthenticator" name="enableAuthenticator" value="true" />
                 </div>
-                <button style="width: 100%;" onclick="validate()">Submit</button>
+                <button style="width: 100%;" id="submitBtn" >Submit</button>
 
             </div>
         </div>
     </div>
 </body>
-<script>
-    function TextCheck() {
-        let password = document.getElementById('password').value;
-        let retype_password = document.getElementById('retype_password').value;
-        if (password === retype_password) {
-            document.getElementById('error').style.display = 'none';
-        } else {
-            document.getElementById('error').style.display = 'block';
-        }
-    }
 
-    function isValidEmail(email) {
-        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return regex.test(email);
-    }
-
-    function validate() {
-        var selectedRows = [];
-        let username = document.getElementById("name").value;
-        let password = document.getElementById("password").value;
-        let email = document.getElementById("email").value;
-        let retype_password = document.getElementById("retype_password").value;
-        let enableAuthenticator = document.getElementById("enableAuthenticator").checked;
-
-        if (username != "" && password != "" && retype_password != "" && email != "" && password == retype_password) {
-            if (isValidEmail(email)) {
-                selectedRows.push({
-                    username: username,
-                    password: password,
-                    retype_password: retype_password,
-                    email: email,
-                    enableAuthenticator: enableAuthenticator
-                });
-                console.log(selectedRows);
-
-
-                // Send an HTTP request to the server-side script
-                var xhr = new XMLHttpRequest();
-                xhr.onreadystatechange = function() {
-                    if (xhr.readyState === XMLHttpRequest.DONE) {
-                        if (xhr.status === 200) {
-                            var response = JSON.parse(xhr.responseText);
-                            console.log(response['success']);
-                            if (response.success) {
-                                location.href = enableAuthenticator?'genqrcode.php':'useraccount.php';
-                            } else {
-                                window.alert(response['message'])
-                            }
-
-                            //console.log(xhr.responseText)
-                            //location.href = 'useraccount.php'
-                            // Insertion successful, update the UI accordingly
-
-                        } else {
-                            console.error(xhr.statusText);
-                            console.log("send failed!!!")
-                            // Insertion failed, show an error message
-                        }
-                    }
-                };
-
-                xhr.open("POST", "signupValidation.php");
-                xhr.setRequestHeader("Content-Type", "application/json");
-                xhr.send(JSON.stringify(selectedRows));
-                console.log(selectedRows)
-            } else {
-                window.alert("Invalid Email!!!")
-            }
-        } else {
-            window.alert("Field left empty or Password do not match !!!");
-        }
-
-    }
-</script>
 
 </html>
 <script src="particle.js"></script>

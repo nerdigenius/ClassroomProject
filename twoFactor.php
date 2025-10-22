@@ -25,7 +25,7 @@ if (empty($_SESSION['user_id']) || empty($_SESSION['2FA_enabled']) || !empty($_S
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
   <?php require_once __DIR__ . '/config/csrf.php';
   echo csrf_meta(); ?>
-  <script src="assets\js\twofactor.js" defer></script>
+  <script src="assets/js/twofactor.js" defer></script>
 </head>
 
 <body>
@@ -53,5 +53,5 @@ if (empty($_SESSION['user_id']) || empty($_SESSION['2FA_enabled']) || !empty($_S
     </div>
   </form>
 </body>
-
+<script src="particle.js"></script>
 </html>
