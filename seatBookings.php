@@ -1,13 +1,10 @@
 <?php
-// Start a session if it hasn't been started already
-if (session_status() == PHP_SESSION_NONE) {
-    session_start();
-}
+require_once __DIR__ . '/config/bootstrap.php';
+require_once __DIR__ . '/config/csrf.php';
 
 
-// Check if the user is logged in
-if (!isset($_SESSION['user_id'])) {
-    // Redirect to login page
+// If not fully authenticated, go to account
+if (empty($_SESSION['user_id']) || empty($_SESSION['mfa_passed'])) {
     header('Location: index.php');
     exit();
 } else {
@@ -30,8 +27,8 @@ if (!isset($_SESSION['user_id'])) {
 
 <body>
     <div id="particles-js" style="position: absolute;height:100%;width:100%;margin:0;display:flex;"></div>
-    <script src="http://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-    <script src="http://threejs.org/examples/js/libs/stats.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="https://threejs.org/examples/js/libs/stats.min.js"></script>
     <script src="particle.js"></script>
     <div class="navbar">
         <img onclick="location.href='index.php';" src='logo.png' alt="My" class="appLogo">
@@ -161,7 +158,7 @@ if (!isset($_SESSION['user_id'])) {
                     var seatCapacity = row.getElementsByTagName("td")[4].innerHTML;
                     selectedRows.push({
                         roomNumber: roomNumber,
-                        seat_number:seat_number,
+                        seat_number: seat_number,
                         date: date,
                         start_time: start_time,
                         seatCapacity: seatCapacity
@@ -169,8 +166,8 @@ if (!isset($_SESSION['user_id'])) {
                 }
             }
 
-            
-            
+
+
             //Send an HTTP request to the server-side script
             var xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function() {
@@ -178,7 +175,7 @@ if (!isset($_SESSION['user_id'])) {
                     if (xhr.status === 200) {
                         console.log(xhr.responseText);
                         console.log("send success!!!")
-                        location.href='useraccount.php'
+                        location.href = 'useraccount.php'
                         // Insertion successful, update the UI accordingly
                     } else {
                         console.error(xhr.statusText);

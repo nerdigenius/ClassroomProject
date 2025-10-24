@@ -104,7 +104,7 @@ $csp .= "base-uri 'self'; form-action 'self';";
 // If we’re on HTTPS, tell browsers to auto-upgrade any http:// subresources.
 
 if ($secure) $csp .= " upgrade-insecure-requests;";
-header("Content-Security-Policy: $csp");
+//header("Content-Security-Policy: $csp");
 
 // Send only trimmed referrers cross-site, keep full referrers same-site.
 

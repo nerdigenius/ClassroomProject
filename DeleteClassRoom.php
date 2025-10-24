@@ -1,16 +1,12 @@
 <?php
-include("config.php");
+require_once __DIR__ . '/config/bootstrap.php';
+require_once __DIR__ . '/config/csrf.php';
 
-// Start a session if it hasn't been started already
-if (session_status() == PHP_SESSION_NONE) {
-    session_start();
-}
 
-// Check if the user is logged in
-if (!isset($_SESSION['user_id'])) {
-    // Redirect to login page
-    header('Location: index.php');
-    exit();
+// If not fully authenticated, go to account
+if (empty($_SESSION['user_id']) || empty($_SESSION['mfa_passed'])) {
+  header('Location: index.php');
+  exit();
 } else {
     // Get user data from session variables
     $user_id = $_SESSION['user_id'];

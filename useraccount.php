@@ -1,15 +1,12 @@
 <?php
-// Start a session if it hasn't been started already
-if (session_status() == PHP_SESSION_NONE) {
-    session_start();
-}
+require_once __DIR__ . '/config/bootstrap.php';
+require_once __DIR__ . '/config/csrf.php';
 
 
-// Check if the user is logged in
-if (!isset($_SESSION['user_id'])) {
-    // Redirect to login page
-    header('Location: index.php');
-    exit();
+// If not fully authenticated, go to account
+if (empty($_SESSION['user_id']) || empty($_SESSION['mfa_passed'])) {
+  header('Location: index.php');
+  exit();
 } else {
     // Get user data from session variables
     $user_id = $_SESSION['user_id'];
@@ -26,14 +23,16 @@ if (!isset($_SESSION['user_id'])) {
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <?= csrf_meta(); ?>
     <link rel="stylesheet" href="style.css">
     <title>ClassRoomBooking</title>
+    <script src="assets/js/useraccount.js" defer></script>
 </head>
 
 <body>
     <div id="particles-js" style="position: absolute;height:100%;width:100%;margin:0;display:flex;"></div>
-    <script src="http://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-    <script src="http://threejs.org/examples/js/libs/stats.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="https://threejs.org/examples/js/libs/stats.min.js"></script>
     <script src="particle.js"></script>
     <div class="navbar">
         <img onclick="location.href='index.php';" src='logo.png' alt="My" class="appLogo">
@@ -44,9 +43,9 @@ if (!isset($_SESSION['user_id'])) {
             <img src="userAccount.svg" class="userIcon" alt="">
             <div style="margin-left: 20px;display:flex;flex-direction:column;justify-content: space-evenly;">
                 <span class="username">Username: <?php echo $user_name ?></span>
-                <button onclick="resetPassword()" style="width: 200px;margin-bottom:10px">Reset Password</button>
-                <form action="logout.php" method="POST" style="width: fit-content;"><button type="submit" style="width: 200px">Logout</button></form>
-                <?php if($_SESSION['2FA_enabled']==0){
+                <button id="reset_password" style="width: 200px;margin-bottom:10px">Reset Password</button>
+                <form action="logout.php" method="POST" style="width: fit-content;"> <?= csrf_field(); ?><button type="submit" style="width: 200px">Logout</button></form>
+                <?php if ($_SESSION['2FA_enabled'] == 0) {
                     echo '<a href="genqrcode.php">Enable 2FA?</a>';
                 } ?>
 
@@ -62,7 +61,6 @@ if (!isset($_SESSION['user_id'])) {
                         <th>Time</th>
                     </tr>
                     <?php
-                    include("config.php");
                     // $sql = "SELECT * FROM `classroombookings` join `time_slots` on classroombookings.time_slot_id=time_slots.id where user_id='$user_id'";
                     // $result = $link->query($sql);
 
@@ -85,7 +83,7 @@ if (!isset($_SESSION['user_id'])) {
                     if ($result->num_rows > 0) {
                         $i = 0;
                         while ($row = $result->fetch_assoc()) {
-                            echo "<tr id='row1" . $i . "'><td>" . $row["booked_item_id"] . "</td><td>" . $row["date"] . "</td><td>" . "<span>" . $row["start_time"] . "</span>" . " to " . $row["end_time"] . "</td><td style='border: 0; width:auto'><button class='buttonTable' onclick='DeleteClassroom(" . $i . ")'>X</button></td></tr>";
+                            echo "<tr id='row1" . $i . "'><td>" . $row["booked_item_id"] . "</td><td>" . $row["date"] . "</td><td>" . "<span>" . $row["start_time"] . "</span>" . " to " . $row["end_time"] . "</td><td style='border: 0; width:auto'><button class='buttonTable delete-classroom-btn' >X</button></td></tr>";
                             $i++;
                         }
                     } else {
@@ -106,6 +104,7 @@ if (!isset($_SESSION['user_id'])) {
                         <th>Date</th>
                         <th>Time</th>
                     </tr>
+                    
                     <?php
                     // $sql = "SELECT date,seats.seat_number,seats.room_number,time_slots.start_time,time_slots.end_time FROM `bookings` join seats on booked_item_id=seats.id join time_slots on time_slot_id=time_slots.id WHERE user_id='$user_id'";
                     // $result = $link->query($sql);
@@ -144,173 +143,23 @@ if (!isset($_SESSION['user_id'])) {
             </table>
         </div>
         <div style="display:flex;margin-top: 20px;justify-content:flex-end;width:100%">
-            <button style="width: 100px;" onclick="popup()">Add More</button>
+            <button style="width: 100px;" id="popup">Add More</button>
         </div>
 
     </div>
 
-    <div class="popupContainer" id="popupContainer" onclick="popupClose()">
+    <div class="popupContainer" id="popupContainer" >
         <div class="popup">
             <span class="popupSpan">What kind of bookings do you want to make?</span>
 
             <div style="display: flex;justify-content:space-evenly">
-                <button class="popupButton" id="ClassRoomBtn" onclick="GoClassRoom()">Classroom</button>
-                <button class="popupButton" id="SeatsBtn" onclick="GoSeats()">Seats</button>
+                <button class="popupButton" id="ClassRoomBtn" >Classroom</button>
+                <button class="popupButton" id="SeatsBtn">Seats</button>
             </div>
 
         </div>
     </div>
 </body>
-<script>
-    function popup() {
-        document.getElementById("popupContainer").style.display = "flex";
-    }
-
-    function popupClose() {
-        document.getElementById("popupContainer").style.display = "none";
-    }
-
-    function GoClassRoom() {
-        location.href = 'classRoomBookings.php'
-    }
-
-    function GoSeats() {
-        location.href = 'seatBookings.php'
-    }
-
-    function resetPassword() {
-        location.href = 'resetPassword.php'
-    }
-
-    function DeleteSeats(id) {
-
-        // "innerText" is used instead of innerHTML to retrieve the text content, which prevents any injected HTML from being executed.
-
-        var selectedRows = [];
-        var classroomTable = document.querySelector("#SeatsTable");
-        var row = classroomTable.querySelector("#row1" + id);
-        var seat_number = row.getElementsByTagName("td")[0].innerText.trim();
-        var roomNumber = row.getElementsByTagName("td")[1].innerText.trim();
-        var date = row.getElementsByTagName("td")[2].innerText.trim();
-        var start_time = row.getElementsByTagName("td")[3].getElementsByTagName("span")[0].innerText.trim();
-
-        // var selectedRows = [];
-        // var classroomTable = document.querySelector("#SeatsTable");
-        // var row = classroomTable.querySelector("#row1" + id);
-        // var seat_number = row.getElementsByTagName("td")[0].innerHTML;
-        // var roomNumber = row.getElementsByTagName("td")[1].innerHTML;
-        // var date = row.getElementsByTagName("td")[2].innerHTML;
-        // var start_time = row.getElementsByTagName("td")[3].getElementsByTagName("span")[0].innerHTML;
-
-        // Sanitized inputs  using encodeURIComponent to handle special characters
-        seat_number = encodeURIComponent(seat_number);
-        roomNumber = encodeURIComponent(roomNumber);
-        date = encodeURIComponent(date);
-        start_time = start_time;
-        
-        selectedRows.push({
-            seat_number: seat_number,
-            roomNumber: roomNumber,
-            date: date,
-            start_time: start_time,
-        });
-
-        console.log(selectedRows);
-
-
-        // Send an HTTP request to the server-side script
-        var xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState === XMLHttpRequest.DONE) {
-                if (xhr.status === 200) {
-                    var response = JSON.parse(xhr.responseText);
-                    console.log(response['success']);
-                    // console.log("send success!!!")
-                    if (response['success'] === true) {
-                        row.remove();
-                    }
-                    //console.log(xhr.responseText)
-                    //location.href = 'useraccount.php'
-                    // Insertion successful, update the UI accordingly
-
-                } else {
-                    console.error(xhr.statusText);
-                    console.log("send failed!!!")
-                    // Insertion failed, show an error message
-                }
-            }
-        };
-        xhr.open("POST", "DeleteSeats.php");
-        xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.send(JSON.stringify(selectedRows));
-        console.log(selectedRows)
-    }
-
-    function DeleteClassroom(id) {
-
-                // "innerText" is used instead of innerHTML to retrieve the text content, which prevents any injected HTML from being executed.
-        var selectedRows = [];
-        var classroomTable = document.querySelector("#classRoomTable");
-        var row = classroomTable.querySelector("#row1" + id);
-        var roomNumber = row.getElementsByTagName("td")[0].innerText;
-        var date = row.getElementsByTagName("td")[1].innerText;
-        var start_time = row.getElementsByTagName("td")[2].getElementsByTagName("span")[0].innerText;
-
-        // Sanitized inputs  using encodeURIComponent to handle special characters
-        roomNumber = encodeURIComponent(roomNumber);
-        date = encodeURIComponent(date);
-        start_time = start_time;
-
-        selectedRows.push({
-            roomNumber: roomNumber,
-            date: date,
-            start_time: start_time,
-        });
-
-        // var selectedRows = [];
-        // var classroomTable = document.querySelector("#classRoomTable");
-        // var row = classroomTable.querySelector("#row1" + id);
-        // var roomNumber = row.getElementsByTagName("td")[0].innerHTML;
-        // var date = row.getElementsByTagName("td")[1].innerHTML;
-        // var start_time = row.getElementsByTagName("td")[2].getElementsByTagName("span")[0].innerHTML;
-        // selectedRows.push({
-        //     roomNumber: roomNumber,
-        //     date: date,
-        //     start_time: start_time,
-        // });
-
-        console.log(selectedRows);
-
-     
-
-
-        // Send an HTTP request to the server-side script
-        var xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState === XMLHttpRequest.DONE) {
-                if (xhr.status === 200) {
-                    var response = JSON.parse(xhr.responseText);
-                    console.log(response['success']);
-                    console.log("send success!!!")
-                    if (response['success'] === true) {
-                        row.remove();
-                    }
-                    //location.href = 'useraccount.php'
-                    // Insertion successful, update the UI accordingly
-
-                } else {
-                    console.error(xhr.statusText);
-                    console.log("send failed!!!")
-                    // Insertion failed, show an error message
-                }
-            }
-        };
-        xhr.open("POST", "DeleteClassRoom.php");
-        xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.send(JSON.stringify(selectedRows));
-        console.log(selectedRows)
-    }
-</script>
 <script src="particle.js"></script>
 
 </html>
