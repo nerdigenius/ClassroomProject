@@ -160,6 +160,6 @@ if (empty($_SESSION['user_id']) || empty($_SESSION['mfa_passed'])) {
         </div>
     </div>
 </body>
-<script src="particle.js"></script>
+
 
 </html>

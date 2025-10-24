@@ -159,7 +159,6 @@
     });
 
      table2.addEventListener("click", (e) => {
-      console.log("clicked");
       const btn = e.target.closest(".delete-seat-btn");
       if (!btn) return;
       const row = btn.closest("tr");

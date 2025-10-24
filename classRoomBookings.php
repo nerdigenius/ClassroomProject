@@ -21,6 +21,8 @@ if (empty($_SESSION['user_id']) || empty($_SESSION['mfa_passed'])) {
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="assets/js/classRoomBookings.js" defer></script>
+     <?= csrf_meta(); ?>
     <link rel="stylesheet" href="style.css">
     <title>ClassRoomBooking</title>
 </head>
@@ -38,13 +40,13 @@ if (empty($_SESSION['user_id']) || empty($_SESSION['mfa_passed'])) {
         <h1>Select the classrooms you want to book</h1>
         <div>
             <label for="setDate">Select a date:</label>
-            <input type="date" id="setDate" name="setDate" onchange="toggleTable()">
+            <input type="date" id="setDate" name="setDate" >
         </div>
         <div div id="classroomTable" style="display:none;">
 
             <span class="tableHeader">Classrooms list:</span>
 
-            <table>
+            <table id="mainTable">
 
                 <tbody id="classroomTableBody">
 
@@ -62,7 +64,7 @@ if (empty($_SESSION['user_id']) || empty($_SESSION['mfa_passed'])) {
 
             </table>
             <div style="display: flex;width:100%;justify-content: flex-end;margin-top:40px">
-                <button style="width: 100px;justify-content:flex-end" onclick="submitForm()">Done!</button>
+                <button style="width: 100px;justify-content:flex-end" id="submitBtn">Done!</button>
             </div>
         </div>
     </div>
