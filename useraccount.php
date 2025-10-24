@@ -131,7 +131,7 @@ if (empty($_SESSION['user_id']) || empty($_SESSION['mfa_passed'])) {
                     if ($result->num_rows > 0) {
                         $i = 0;
                         while ($row = $result->fetch_assoc()) {
-                            echo "<tr id='row1" . $i . "'><td>" . $row["seat_number"] . "</td><td>" . $row["room_number"] . "</td><td>" . $row["date"] . "</td><td>" . "<span>" . $row["start_time"] . "</span>" . " to " . $row["end_time"] . "</td><td style='border: 0; width:auto'><button class='buttonTable' onclick='DeleteSeats(" . $i . ")'>X</button></td></tr>";
+                            echo "<tr id='row2" . $i . "'><td>" . $row["seat_number"] . "</td><td>" . $row["room_number"] . "</td><td>" . $row["date"] . "</td><td>" . "<span>" . $row["start_time"] . "</span>" . " to " . $row["end_time"] . "</td><td style='border: 0; width:auto'><button class='buttonTable delete-seat-btn'>X</button></td></tr>";
                             $i++;
                         }
                     } else {

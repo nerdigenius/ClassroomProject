@@ -24,7 +24,7 @@
 
     var selectedRows = [];
     var classroomTable = document.querySelector("#SeatsTable");
-    var row = classroomTable.querySelector("#row1" + id);
+    var row = classroomTable.querySelector("#row2" + id);
     var seat_number = row.getElementsByTagName("td")[0].innerText.trim();
     var roomNumber = row.getElementsByTagName("td")[1].innerText.trim();
     var date = row.getElementsByTagName("td")[2].innerText.trim();
@@ -146,6 +146,8 @@
   }
   document.addEventListener("DOMContentLoaded", () => {
     const table = document.getElementById("classRoomTable");
+    const table2 = document.getElementById("SeatsTable");
+     console.log("table2 is:", table2);
 
     table.addEventListener("click", (e) => {
       const btn = e.target.closest(".delete-classroom-btn");
@@ -154,6 +156,16 @@
       const match = row?.id.match(/^row1(\d+)$/);
       const i = match ? parseInt(match[1], 10) : NaN;
       if (Number.isFinite(i)) DeleteClassroom(i);
+    });
+
+     table2.addEventListener("click", (e) => {
+      console.log("clicked");
+      const btn = e.target.closest(".delete-seat-btn");
+      if (!btn) return;
+      const row = btn.closest("tr");
+      const match = row?.id.match(/^row2(\d+)$/);
+      const i = match ? parseInt(match[1], 10) : NaN;
+      if (Number.isFinite(i)) DeleteSeats(i);
     });
 
     document.getElementById("reset_password").addEventListener("click", (e) => {
