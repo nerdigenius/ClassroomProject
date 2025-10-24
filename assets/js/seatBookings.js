@@ -1,8 +1,5 @@
 (function () {
-  window.onload = function () {
-    var today = new Date().toISOString().split("T")[0];
-    document.getElementById("setDate").setAttribute("min", today);
-  };
+
 
   function toggleTable() {
     var dateInput = document.getElementById("setDate");
@@ -22,7 +19,9 @@
           for (let i = 0; i < data.length; i++) {
             if (data[i].status === "booked") {
               row =
-                "<tr id="+i+">" +
+                "<tr id=" +
+                i +
+                ">" +
                 "<td style='background-color: grey;' id='row1room" +
                 i +
                 "'>" +
@@ -66,7 +65,9 @@
               ("</tr>");
             } else {
               row =
-                "<tr id="+i+">" +
+                "<tr id=" +
+                i +
+                ">" +
                 "<td  id='row1room" +
                 i +
                 "'>" +
@@ -192,21 +193,50 @@
   }
 
   document.addEventListener("DOMContentLoaded", function () {
-        const table = document.getElementById("mainTable");
-        table.addEventListener("click", (e) => {
-          const btn = e.target.closest("tr");
-          if (!btn) return;
-          const row = btn;
-          const match = row?.id.match(/^(\d+)$/);
-          const i = match ? parseInt(match[1], 10) : NaN;
-          toggleHighlight(i);
-        });
+    const table = document.getElementById("mainTable");
+    table.addEventListener("click", (e) => {
+      const btn = e.target.closest("tr");
+      if (!btn) return;
+      const row = btn;
+      const match = row?.id.match(/^(\d+)$/);
+      const i = match ? parseInt(match[1], 10) : NaN;
+      toggleHighlight(i);
+    });
 
-    document
-      .getElementById("setDate")
-      .addEventListener("change", toggleTable);
-    document
-      .getElementById("submitBtn")
-      .addEventListener("click", submitForm);
+    // Set minimum date for date picker based on current time and
+    // cutoff hour (24h format)
+    const CUTOFF_HOUR = 17; // 5 PM
+
+    const now = new Date();
+
+    // Decide which date should be the earliest selectable
+    // If it's 17:00 or later: force them to book starting tomorrow
+    // Otherwise: let them still pick today
+    const minDateObj = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate() + (now.getHours() >= CUTOFF_HOUR ? 1 : 0)
+    );
+
+    // Format yyyy-mm-dd for <input type="date">
+    const yyyy = minDateObj.getFullYear();
+    const mm = String(minDateObj.getMonth() + 1).padStart(2, "0");
+    const dd = String(minDateObj.getDate()).padStart(2, "0");
+    const minDateStr = `${yyyy}-${mm}-${dd}`;
+
+    // Apply it to the picker
+    const dateInput = document.getElementById("setDate");
+    if (dateInput) {
+      dateInput.setAttribute("min", minDateStr);
+
+      // Optional nice touch:
+      // If the current value (or default value) is now "invalid" (e.g. page prefilled today but it's after 5 PM),
+      // snap it forward to min so the UI doesn't look empty/blocked.
+      if (dateInput.value && dateInput.value < minDateStr) {
+        dateInput.value = minDateStr;
+      }
+    }
+    document.getElementById("setDate").addEventListener("change", toggleTable);
+    document.getElementById("submitBtn").addEventListener("click", submitForm);
   });
 })();
