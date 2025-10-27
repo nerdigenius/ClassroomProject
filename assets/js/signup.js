@@ -3,11 +3,16 @@
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return regex.test(email);
   }
+
+  function getCsrfToken() {
+    const meta = document.querySelector('meta[name="csrf-token"]');
+    return meta ? meta.getAttribute("content") : "";
+  }
+
   function validate() {
-    var selectedRows = [];
-    let username = document.getElementById("name").value;
+    let username = document.getElementById("name").value.trim();
     let password = document.getElementById("password").value;
-    let email = document.getElementById("email").value;
+    let email = document.getElementById("email").value.trim();
     let retype_password = document.getElementById("retype_password").value;
     let enableAuthenticator = document.getElementById(
       "enableAuthenticator"
@@ -20,23 +25,39 @@
       email != "" &&
       password == retype_password
     ) {
+      //minimum password length
+      if (password.length < 8) {
+        window.alert("Password must be at least 8 characters !!!");
+        return;
+      }
       if (isValidEmail(email)) {
-        selectedRows.push({
+        // build payload for server
+        const payload = {
           username: username,
           password: password,
           retype_password: retype_password,
           email: email,
           enableAuthenticator: enableAuthenticator,
-        });
-        console.log(selectedRows);
+          csrf_token: getCsrfToken(), // include CSRF token
+        };
 
         // Send an HTTP request to the server-side script
         var xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function () {
           if (xhr.readyState === XMLHttpRequest.DONE) {
             if (xhr.status === 200) {
-              var response = JSON.parse(xhr.responseText);
-              console.log(response["success"]);
+              var response;
+              try {
+                response = JSON.parse(xhr.responseText);
+              } catch (err) {
+                console.error(
+                  "Invalid JSON from server:",
+                  err,
+                  xhr.responseText
+                );
+                window.alert("Server error. Please try again.");
+                return;
+              }
               if (response.success) {
                 location.href = enableAuthenticator
                   ? "genqrcode.php"
@@ -53,13 +74,12 @@
               console.log("send failed!!!");
               // Insertion failed, show an error message
             }
-          }
+          } 
         };
 
         xhr.open("POST", "signupValidation.php");
         xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.send(JSON.stringify(selectedRows));
-        console.log(selectedRows);
+        xhr.send(JSON.stringify(payload));
       } else {
         window.alert("Invalid Email!!!");
       }

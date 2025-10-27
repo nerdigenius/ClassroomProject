@@ -1,6 +1,10 @@
 <?php
+declare(strict_types=1);
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 require_once __DIR__ . '/config/bootstrap.php';
 require_once __DIR__ . '/config/csrf.php';
+
 
 
 // If not fully authenticated, go to login
@@ -32,7 +36,6 @@ if (empty($_SESSION['user_id']) || empty($_SESSION['mfa_passed'])) {
 <body>
     <div id="particles-js" style="position: absolute;height:100%;width:100%;margin:0;display:flex;"></div>
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-    <script src="https://threejs.org/examples/js/libs/stats.min.js"></script>
     <script src="particle.js"></script>
     <div class="navbar">
         <img onclick="location.href='index.php';" src='logo.png' alt="My" class="appLogo">

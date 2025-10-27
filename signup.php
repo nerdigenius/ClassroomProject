@@ -8,6 +8,9 @@ require_once __DIR__ . '/config/csrf.php';
 if (!empty($_SESSION['user_id']) && !empty($_SESSION['mfa_passed'])) {
     header('Location: useraccount.php'); exit();
 }
+if(empty($_SESSION['2FA_enabled'])){
+    $_SESSION['2FA_enabled'] = 0;
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">

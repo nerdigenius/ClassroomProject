@@ -94,7 +94,7 @@ header("X-Content-Type-Options: nosniff");
 // you can post forms and set the base URL.
 
 $csp  = "default-src 'self'; ";
-$csp .= "img-src 'self' data: https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=otpauth%3A%2F%2Ftotp%2FClassRoomBookingSystem%40localhost%3Fsecret%3DZCIT5XQ2N4EJFRDM&ecc=M; ";
+$csp .= "img-src 'self' data: https://api.qrserver.com/v1/create-qr-code/; ";
 $csp .= "style-src 'self' 'unsafe-inline'; ";
 $csp .= "script-src 'self' https://ajax.googleapis.com https://cdn.jsdelivr.net https://threejs.org; ";
 $csp .= "connect-src 'self'; ";

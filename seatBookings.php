@@ -31,7 +31,6 @@ if (empty($_SESSION['user_id']) || empty($_SESSION['mfa_passed'])) {
 <body>
     <div id="particles-js" style="position: absolute;height:100%;width:100%;margin:0;display:flex;"></div>
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-    <script src="https://threejs.org/examples/js/libs/stats.min.js"></script>
     
     <script src="particle.js"></script>
     

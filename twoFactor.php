@@ -1,7 +1,9 @@
 <?php
 require_once __DIR__ . '/config/bootstrap.php';
 require_once __DIR__ . '/config/csrf.php';
-
+declare(strict_types=1);
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 // If already fully authenticated, go to account
 if (!empty($_SESSION['user_id']) && !empty($_SESSION['mfa_passed'])) {
   header('Location: useraccount.php');
@@ -31,7 +33,6 @@ if (empty($_SESSION['user_id']) || empty($_SESSION['2FA_enabled']) || !empty($_S
 <body>
   <div id="particles-js" style="position: absolute;height:100%;width:100%;margin:0;display:flex;"></div>
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-  <script src="https://threejs.org/examples/js/libs/stats.min.js"></script>
 
   <div class="navbar">
     <img onclick="location.href='index.php';" src='logo.png' alt="My" class="appLogo">

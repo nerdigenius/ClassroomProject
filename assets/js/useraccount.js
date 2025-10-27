@@ -80,7 +80,6 @@
     xhr.open("POST", "DeleteSeats.php");
     xhr.setRequestHeader("Content-Type", "application/json");
     xhr.send(JSON.stringify(selectedRows));
-    console.log(selectedRows);
   }
 
   function DeleteClassroom(id) {
@@ -147,7 +146,6 @@
   document.addEventListener("DOMContentLoaded", () => {
     const table = document.getElementById("classRoomTable");
     const table2 = document.getElementById("SeatsTable");
-     console.log("table2 is:", table2);
 
     table.addEventListener("click", (e) => {
       const btn = e.target.closest(".delete-classroom-btn");
