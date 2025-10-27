@@ -3,7 +3,7 @@ require_once __DIR__ . '/config/bootstrap.php';
 require_once __DIR__ . '/config/csrf.php';
 
 
-// If not fully authenticated, go to account
+// If not fully authenticated, go to login
 if (empty($_SESSION['user_id']) || empty($_SESSION['mfa_passed'])) {
   header('Location: index.php');
   exit();

@@ -39,7 +39,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 include_once 'vendor/sonata-project/google-authenticator/src/GoogleAuthenticator.php';
                 include_once 'vendor/sonata-project/google-authenticator/src/GoogleQrUrl.php';
 
-                $g = new \Google\Authenticator\GoogleAuthenticator();
+                $g = new \Sonata\GoogleAuthenticator\GoogleAuthenticator();
 
                 
                
@@ -49,6 +49,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                     echo json_encode(['success' => true, 'message' => 'Code verification successful']);
                     // Perform further actions if the code is correct
+                    $_SESSION['mfa_passed'] = true;
                 } else {
                     echo json_encode(['success' => false, 'message' => 'Incorrect or expired code']);
                     // Handle incorrect/expired code scenario

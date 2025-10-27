@@ -1,13 +1,10 @@
 <?php
-include("config.php");
+require_once __DIR__ . '/config/bootstrap.php';
+require_once __DIR__ . '/config/csrf.php';
 
-// Start a session if it hasn't been started already
-if (session_status() == PHP_SESSION_NONE) {
-    session_start();
-}
 
 // Check if the user is logged in
-if (!isset($_SESSION['user_id'])) {
+if (empty($_SESSION['user_id']) || empty($_SESSION['mfa_passed'])) {
     // Redirect to login page if not logged in
     header('Location: index.php');
     exit();
@@ -16,7 +13,6 @@ if (!isset($_SESSION['user_id'])) {
     $user_id = $_SESSION['user_id'];
     $user_name = $_SESSION['user_name'];
     $user_email = $_SESSION['user_email'];
-    $_SESSION['2FA_enabled']=1;
 }
 
 include 'vendor/sonata-project/google-authenticator/src/FixedBitNotation.php';
@@ -30,6 +26,9 @@ $g = new \Sonata\GoogleAuthenticator\GoogleAuthenticator();
 $new_secret = $g->generateSecret();
 $twoFA_enabled = 1; 
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST'){
+    
+}
 // Prepare the SQL statement with placeholders
 $query = "UPDATE user SET secret_key = ?, 2FA_enabled = 1 WHERE id = ?";
 
@@ -79,39 +78,7 @@ if ($stmt = mysqli_prepare($link, $query)) {
     </form>
 
     <script>
-        const codeForm = document.getElementById('codeForm');
-
-        codeForm.addEventListener('submit', async (event) => {
-            event.preventDefault();
-
-            const codeInput = document.getElementById('codeInput').value;
-
-            try {
-                const response = await fetch('check.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ code: codeInput })
-                });
-
-                const result = await response.json();
-
-                if (response.ok) {
-                    if (result.success) {
-                        window.alert("Code verification successful.");
-                        window.location.href = 'useraccount.php';
-                        // Redirect or perform necessary actions upon success
-                    } else {
-                        window.alert("Incorrect code. Please try again.");
-                    }
-                } else {
-                    console.error('Failed to verify code:', result.message);
-                }
-            } catch (error) {
-                console.error('Error occurred:', error);
-            }
-        });
+        
     </script>
 </body>
 
