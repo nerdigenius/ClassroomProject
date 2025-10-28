@@ -1,40 +1,46 @@
 (function () {
-  const codeForm = document.getElementById('codeForm');
+  const codeForm = document.getElementById("codeForm");
 
-        codeForm.addEventListener('submit', async (event) => {
-            event.preventDefault();
+  function getCsrf() {
+    var el = document.querySelector('meta[name="csrf-token"]');
+    return el ? el.getAttribute("content") : "";
+  }
 
-            const codeInput = document.getElementById('codeInput').value;
+  codeForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
 
-            try {
-                const response = await fetch('check.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        code: codeInput
-                    })
-                });
+    const codeInput = document.getElementById("codeInput").value;
 
-                const result = await response.json();
+    try {
+        const csrfToken = getCsrf();
+      const response = await fetch("check.php", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRF-Token": csrfToken,
+        },
+        body: JSON.stringify({
+          code: codeInput,
+        }),
+      });
 
-                if (response.ok) {
-                    if (result.success) {
-                        window.alert("Code verification successful.");
-                        // Redirect or perform necessary actions upon success
-                        window.location.href = 'useraccount.php';
-                    } else {
-                        
-                        window.alert("Incorrect code. Please try again.");
-                        
-                        window.location.href = 'logout.php';
-                    }
-                } else {
-                    console.error('Failed to verify code:', result.message);
-                }
-            } catch (error) {
-                console.error('Error occurred:', error);
-            }
-        });
+      const result = await response.json();
+
+      if (response.ok) {
+        if (result.success) {
+          window.alert("Code verification successful.");
+          // Redirect or perform necessary actions upon success
+          window.location.href = "useraccount.php";
+        } else {
+          window.alert("Incorrect code. Please try again.");
+
+          window.location.href = "logout.php";
+        }
+      } else {
+        console.error("Failed to verify code:", result.message);
+      }
+    } catch (error) {
+      console.error("Error occurred:", error);
+    }
+  });
 })();

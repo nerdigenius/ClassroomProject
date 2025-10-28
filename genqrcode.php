@@ -2,14 +2,13 @@
 require_once __DIR__ . '/config/bootstrap.php';
 require_once __DIR__ . '/config/csrf.php';
 
-// Require authenticated + MFA-passed session
+// Must be logged in and MFA passed
 if (empty($_SESSION['user_id']) || empty($_SESSION['mfa_passed'])) {
     header('Location: index.php');
     exit();
 }
 
-$user_id = $_SESSION['user_id'];
-$user_name = $_SESSION['user_name'];
+$user_id    = $_SESSION['user_id'];
 $user_email = $_SESSION['user_email'];
 
 include 'vendor/sonata-project/google-authenticator/src/FixedBitNotation.php';
@@ -19,7 +18,7 @@ include 'vendor/sonata-project/google-authenticator/src/GoogleQrUrl.php';
 
 $g = new \Sonata\GoogleAuthenticator\GoogleAuthenticator();
 
-// Generate or reuse pending secret
+// Generate or reuse secret
 if (empty($_SESSION['pending_2fa_secret'])) {
     $_SESSION['pending_2fa_secret'] = $g->generateSecret();
 }
@@ -27,74 +26,50 @@ $new_secret = $_SESSION['pending_2fa_secret'];
 
 $query = "UPDATE user SET secret_key = ?, `2FA_enabled` = 1 WHERE id = ?";
 
-// ---------- AJAX POST branch (returns JSON, no page reload) ----------
+// ---------- AJAX POST branch ----------
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-    // Respond as JSON ALWAYS for POST
     header('Content-Type: application/json');
-
-    // CSRF check. If invalid, require_csrf() will exit with 403.
     require_csrf();
 
-    // Grab and normalize code
-    $code = $_POST['code'] ?? '';
-    $code = preg_replace('/\D/', '', $code); // keep only digits
+    $code = preg_replace('/\D/', '', $_POST['code'] ?? '');
 
     if (strlen($code) !== 6) {
         echo json_encode([
             'ok' => false,
-            'error' => 'Code must be 6 digits.'
+            'flash' => ['type' => 'error', 'text' => 'Code must be 6 digits.']
         ]);
         exit();
     }
 
-    // Check TOTP
     if ($g->checkCode($new_secret, $code)) {
-
         if ($stmt = mysqli_prepare($link, $query)) {
             mysqli_stmt_bind_param($stmt, "si", $new_secret, $user_id);
-
             if (mysqli_stmt_execute($stmt)) {
                 unset($_SESSION['pending_2fa_secret']);
-
+                $_SESSION['2FA_enabled'] = 1;
                 echo json_encode([
                     'ok' => true,
-                    'redirect' => 'useraccount.php'
-                ]);
-
-                mysqli_stmt_close($stmt);
-                exit();
-            } else {
-                $err = mysqli_error($link);
-                mysqli_stmt_close($stmt);
-
-                echo json_encode([
-                    'ok' => false,
-                    'error' => 'Database error: ' . $err
+                    'redirect' => 'useraccount.php',
+                    'flash' => ['type' => 'success', 'text' => '2FA enabled 🎉 Redirecting...']
                 ]);
                 exit();
             }
-        } else {
-            echo json_encode([
-                'ok' => false,
-                'error' => 'Prepared statement failed.'
-            ]);
-            exit();
         }
-    } else {
-        // Wrong TOTP code
         echo json_encode([
             'ok' => false,
-            'error' => 'Invalid code. Please try again.'
+            'flash' => ['type' => 'error', 'text' => 'Database error. Please try again.']
         ]);
         exit();
     }
+
+    echo json_encode([
+        'ok' => false,
+        'flash' => ['type' => 'error', 'text' => 'Invalid code. Please try again.']
+    ]);
+    exit();
 }
 
-// ---------- Normal GET branch (renders page) ----------
-
-// IMPORTANT: we only generate QR when GET-rendering.
-// This URL is probably something like https://chart.googleapis.com/...
+// ---------- GET branch: render page ----------
 $qrUrl = \Sonata\GoogleAuthenticator\GoogleQrUrl::generate(
     $user_email,
     $new_secret,
@@ -103,56 +78,37 @@ $qrUrl = \Sonata\GoogleAuthenticator\GoogleQrUrl::generate(
 ?>
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>2FA Setup</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2FA Setup</title>
 
-    <!-- external CSS file (no inline styles, CSP safe) -->
-    <link rel="stylesheet" href="assets/css/genqrcode.css">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="assets/css/genqrcode.css">
 
-    <!-- external JS file (no inline JS; defer so DOM is ready) -->
-    <script src="assets/js/genqrcode.js" defer></script>
+  <meta name="csrf-token" content="<?= htmlspecialchars(csrf_token(), ENT_QUOTES) ?>">
+  <script src="assets/js/genqrcode.js" defer></script>
 </head>
-
 <body>
-    <div>
-        <div>
-            <img
-                src="<?= htmlspecialchars($qrUrl, ENT_QUOTES, 'UTF-8'); ?>"
-                alt="Scan this QR">
-        </div>
+  <div class="twofa-wrapper">
+    <h1>2FA Setup</h1>
 
-        <h3>Enter the code generated by Authenticator App</h3>
-
-        <form
-            id="codeForm"
-            method="POST"
-            action="genqrcode.php"
-            novalidate>
-            <?= csrf_field(); ?>
-
-            <label for="codeInput">Enter code here:</label>
-
-            <input
-                type="text"
-                name="code"
-                id="codeInput"
-
-                inputmode="numeric"
-                autocomplete="one-time-code"
-                required>
-
-            <input
-                type="submit"
-                value="Confirm">
-        </form>
-
-        <!-- message containers for JS -->
-        <div id="errorBox"></div>
-        <div id="successBox"></div>
+    <div class="qr-block">
+      <img src="<?= htmlspecialchars($qrUrl, ENT_QUOTES) ?>" alt="Scan this QR">
     </div>
-</body>
 
+    <h3>Scan the QR in Google Authenticator / Authy</h3>
+    <p>Then enter the 6-digit code below to complete setup.</p>
+
+    <!-- Flash container -->
+    <div id="flashBox"></div>
+
+    <form id="codeForm" method="POST" action="genqrcode.php">
+      <?= csrf_field(); ?>
+      <label for="codeInput">Enter 6-digit code:</label>
+      <input type="text" id="codeInput" name="code" inputmode="numeric" required>
+      <button type="submit">Confirm</button>
+    </form>
+  </div>
+</body>
 </html>
