@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
 require_once __DIR__ . '/config/bootstrap.php';
 require_once __DIR__ . '/config/csrf.php';
-declare(strict_types=1);
+
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 // If already fully authenticated, go to account
