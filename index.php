@@ -225,7 +225,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                         <span id="pwText" style="margin: 0 10px;">Show Password</span>
                     </button>
-                    <a href="resetPassword.php">Forgot Password</a>
                 </div>
             </div>
             <div style="width: 100%;display: flex;justify-content: space-evenly;align-items:center;flex-direction: column;height: 50%;">
