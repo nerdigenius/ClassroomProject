@@ -2,6 +2,10 @@
 require_once __DIR__ . '/config/bootstrap.php';
 require_once __DIR__ . '/config/csrf.php';
 
+header('Content-Type: application/json');
+
+require_csrf();
+
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Access the posted data sent from the client-side
@@ -11,10 +15,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Extract the code received from the client-side
         $code = $receivedData['code'];
 
-        // Start a session if it hasn't been started already
-        if (session_status() == PHP_SESSION_NONE) {
-            session_start();
-        }
+        
 
         // Check if the user is logged in
         if (!isset($_SESSION['user_id'])) {

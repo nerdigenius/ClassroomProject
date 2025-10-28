@@ -6,6 +6,10 @@
   function popupClose() {
     document.getElementById("popupContainer").style.display = "none";
   }
+   function getCsrf() {
+  var el = document.querySelector('meta[name="csrf-token"]');
+  return el ? el.getAttribute('content') : '';
+}
 
   function GoClassRoom() {
     location.href = "classRoomBookings.php";
@@ -79,6 +83,7 @@
     };
     xhr.open("POST", "DeleteSeats.php");
     xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.setRequestHeader("X-CSRF-Token", getCsrf());
     xhr.send(JSON.stringify(selectedRows));
   }
 
@@ -140,6 +145,7 @@
     };
     xhr.open("POST", "DeleteClassRoom.php");
     xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.setRequestHeader("X-CSRF-Token", getCsrf());
     xhr.send(JSON.stringify(selectedRows));
     console.log(selectedRows);
   }

@@ -44,7 +44,7 @@ if (empty($_SESSION['user_id']) || empty($_SESSION['mfa_passed'])) {
     </div>
     <div class="userAccount">
         <div class="userinfo">
-            <img src="userAccount.svg" class="userIcon" alt="">
+            <img src="assets/images/userAccount.svg" class="userIcon" alt="">
             <div style="margin-left: 20px;display:flex;flex-direction:column;justify-content: space-evenly;">
                 <span class="username">Username: <?php echo $user_name ?></span>
                 <button id="reset_password" style="width: 200px;margin-bottom:10px">Reset Password</button>

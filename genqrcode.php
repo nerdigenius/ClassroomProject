@@ -33,9 +33,7 @@ $new_secret = $_SESSION['pending_2fa_secret'];
 $query = "UPDATE user SET secret_key = ?, `2FA_enabled` = 1 WHERE id = ?";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (!csrf_validate()) {
-        exit('Security check failed');
-    }
+    require_csrf();
 
     $code = $_POST['code'] ?? '';
 
@@ -82,6 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>2FA Setup</title>
+    
 </head>
 
 <body>
@@ -98,7 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <form id="codeForm" method="POST" action="genqrcode.php">
         <?= csrf_field(); ?>
         <label for="codeInput">Enter code here: </label>
-        <input type="text" name="code" id="codeInput" required>
+        <input type="text" name="code" id="codeInput"  inputmode="numeric" required>
         <input type="submit" value="Confirm">
     </form>
 </body>

@@ -3,16 +3,21 @@ require_once __DIR__ . '/config/bootstrap.php';
 require_once __DIR__ . '/config/csrf.php';
 
 
-// If not fully authenticated, go to account
+header('Content-Type: application/json');
+
+// 1. Auth guard
 if (empty($_SESSION['user_id']) || empty($_SESSION['mfa_passed'])) {
-  header('Location: index.php');
-  exit();
-} else {
+    http_response_code(401);
+    echo json_encode(['error' => 'Unauthorized']);
+    exit();
+}
+// 2. CSRF protection
+require_csrf();
     // Get user data from session variables
     $user_id = $_SESSION['user_id'];
     $user_name = $_SESSION['user_name'];
     $user_email = $_SESSION['user_email'];
-}
+
 
 $json = file_get_contents('php://input');
 $data = json_decode($json, true);
