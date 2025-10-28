@@ -24,8 +24,7 @@ if (!isset($_POST['date'])) {
 $date = $_POST['date'];
 
 
-// Get the table data
-include("config.php");
+
 $sql = "SELECT `classroom`.`id`,classroom.seat_capacity,time_slots.start_time,time_slots.end_time, IFNULL(bookings.id, 0) AS booking_id
 FROM `classroom`
 CROSS JOIN `time_slots`

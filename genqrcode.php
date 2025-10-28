@@ -33,7 +33,7 @@ $new_secret = $_SESSION['pending_2fa_secret'];
 $query = "UPDATE user SET secret_key = ?, `2FA_enabled` = 1 WHERE id = ?";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (!csrf_validate($_POST['_csrf'] ?? '')) {
+    if (!csrf_validate()) {
         exit('Security check failed');
     }
 

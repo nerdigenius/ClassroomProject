@@ -24,8 +24,7 @@ if (!isset($_POST['date'])) {
 $date = $_POST['date'];
 
 
-// Get the table data
-include("config.php");
+
 $sql = "SELECT s.id, s.room_number, s.seat_number, sc.seat_capacity, ts.start_time, ts.end_time,
 CASE WHEN b.id IS NOT NULL THEN 'booked' ELSE 'available' END AS status
 FROM seats s

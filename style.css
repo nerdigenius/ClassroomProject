@@ -2,7 +2,7 @@ body {
   display: flex;
   width: 100%;
   height: 100%;
-  background: url(background.svg);
+  background: url(assets/images/background.svg);
   background-size: cover;
   margin: 0%;
   align-items: flex-start;
@@ -18,7 +18,6 @@ body {
 html {
   height: 100%;
   width: 100%;
-  
 }
 
 .flash {
@@ -28,8 +27,16 @@ html {
   border-radius: 8px;
   font-weight: 600;
 }
-.flash.error { background:#fdecea; color:#b71c1c; border:1px solid #f5c6cb; }
-.flash.success { background:#e8f5e9; color:#1b5e20; border:1px solid #c8e6c9; }
+.flash.error {
+  background: #fdecea;
+  color: #b71c1c;
+  border: 1px solid #f5c6cb;
+}
+.flash.success {
+  background: #e8f5e9;
+  color: #1b5e20;
+  border: 1px solid #c8e6c9;
+}
 
 .textTop {
   font-family: "Comic Sans MS";
@@ -42,7 +49,7 @@ html {
   -webkit-align-items: center;
   -ms-flex-align: center;
   align-items: center;
-  background: url(background.svg);
+  background: url(assets/images/background.svg);
   background-size: cover;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -74,7 +81,7 @@ html {
   display: flex;
   width: 50%;
   height: 100%;
-  background: url(loginBackground.svg);
+  background: url(assets/images/loginBackground.svg);
   background-size: cover;
   background-repeat: no-repeat;
   display: flex;
@@ -139,11 +146,10 @@ input:focus {
   border-color: 2px solid green;
   outline: 2px solid #6f82cd;
 }
-.username{
+.username {
   font-family: "Comic Sans MS";
   color: #3a3fc1;
-  font-size:x-large;
-  
+  font-size: x-large;
 }
 
 button {
@@ -153,6 +159,7 @@ button {
   color: white;
   background-color: #3a3fc1;
   border: none;
+  cursor: pointer;
 }
 .form-control,
 button,
@@ -208,9 +215,9 @@ td,
 table {
   font-family: "Comic Sans MS";
 }
-tbody{
+tbody {
   display: block;
-  overflow:auto ;
+  overflow: auto;
   height: 400px;
 }
 table {
@@ -262,28 +269,57 @@ h1 {
   position: absolute;
   display: flex;
   flex-direction: column;
-  background-color: #4D559D;
+  background-color: #4d559d;
   min-width: 400px;
   min-height: 150px;
   max-width: 400px;
   max-height: 200px;
-  justify-content: space-evenly; 
+  justify-content: space-evenly;
   border-radius: 30px;
 }
 .popupButton {
   background-color: #212653;
   width: 100px;
 }
-.popupSpan{
+.popupSpan {
   width: 100%;
   text-align: center;
   color: white;
   font-family: "Comic Sans MS";
   font-size: medium;
 }
-.highlighted{
+.highlighted {
   background-color: #3a3fc1;
   color: white;
+}
+
+.pw-button {
+  display: flex;
+  align-items: center;
+  width: fit-content;
+
+  background-color: #fff;
+  color: #3a3fc1;              /* <-- sets text AND svg stroke */
+  border: 2px solid #3a3fc1;
+  border-radius: 8px;
+  cursor: pointer;
+
+  /* optional polish */
+  padding: 0 10px;
+  
+ 
+}
+
+.pw-button:hover {
+  background-color: #3a3fc1;
+  color: #fff;                 /* <-- both text AND icon turn white */
+}
+
+.pw-icon-eye {
+  width: 25px;
+  height: 25px;
+  display: block;
+  flex-shrink: 0;
 }
 
 @media only screen and (max-width: 768px) {

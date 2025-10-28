@@ -54,5 +54,5 @@ if (empty($_SESSION['user_id']) || empty($_SESSION['2FA_enabled']) || !empty($_S
     </div>
   </form>
 </body>
-<script src="particle.js"></script>
+<script src="particle.js" defer></script>
 </html>

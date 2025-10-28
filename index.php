@@ -16,7 +16,8 @@ require_once __DIR__ . '/config/csrf.php';
 
 //reset helper function
 
-function full_reset_session(): void {
+function full_reset_session(): void
+{
     $_SESSION = [];
     if (ini_get('session.use_cookies')) {
         $p = session_get_cookie_params();
@@ -42,7 +43,6 @@ if (
     empty($_SESSION['mfa_passed'])
 ) {
     full_reset_session();
-    
 }
 
 // Basic per-IP / per-session throttle (bump for failures only)
@@ -147,9 +147,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body>
     <div id="particles-js" style="position: absolute;height:100%;width:100%;margin:0;display:flex;"></div>
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="assets/js/index.js"></script>
+    <script src="particle.js" defer></script>
 
     <div class="navbar">
-        <img onclick="location.href='index.php';" src='logo.png' alt="My" class="appLogo">
+        <img onclick="location.href='index.php';" src='assets/images/logo.png' alt="My" class="appLogo">
         <h1>ClassRoom Booking System</h1>
     </div>
 
@@ -160,7 +162,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <p class="textClass">Book your classroom now!</p>
             </div>
             <div class="loginLogoBackGround">
-                <img src="loginLogo.svg" style="width: 100%; height: auto" />
+                <img src="assets/images/loginLogo.svg" style="width: 100%; height: auto" />
             </div>
 
             <div class="textClass">
@@ -185,20 +187,56 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <div class="form-group">
                         <input type="password" id="password" class="form-control" placeholder=" " name="password" />
                         <label for="password" class="form-label">Password</label>
+
                     </div>
+                    <button
+                        type="button"
+                        id="togglePassword"
+                        aria-label="Show password"
+                        class="pw-button">
+                        <svg
+                            id="pwIcon"
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            width="18" height="18"
+                            aria-hidden="true"
+                            focusable="false"
+                            class="pw-icon-eye">
+                            <path
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z">
+                            </path>
+                            <circle
+                                cx="12"
+                                cy="12"
+                                r="3"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2">
+                            </circle>
+                            <!-- slash -->
+                            <path id="pwSlash" style="display:none;" d="M3 3l18 18" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                        </svg>
+
+                        <span id="pwText" style="margin: 0 10px;">Show Password</span>
+                    </button>
                     <a href="resetPassword.php">Forgot Password</a>
                 </div>
             </div>
             <div style="width: 100%;display: flex;justify-content: space-evenly;align-items:center;flex-direction: column;height: 50%;">
                 <button id='login' type="submit" name="submit">Login</button>
                 <button id="signup" type="submit" formaction="signup.php" formmethod="get" formnovalidate>Sign Up</button>
-                    
+
             </div>
         </form>
         <form id="signup-form" action="signup.php" method="get"></form>
     </div>
 </body>
 
-<script src="particle.js"></script>
+
 
 </html>

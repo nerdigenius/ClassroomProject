@@ -69,4 +69,4 @@ if(empty($_SESSION['2FA_enabled'])){
 
 
 </html>
-<script src="particle.js"></script>
+<script src="particle.js" defer></script>
