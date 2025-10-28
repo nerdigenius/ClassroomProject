@@ -142,13 +142,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
     <?php require_once __DIR__ . '/config/csrf.php';
     echo csrf_meta(); ?>
+    <script src="particle.js" defer></script>
 </head>
 
 <body>
     <div id="particles-js" style="position: absolute;height:100%;width:100%;margin:0;display:flex;"></div>
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script src="assets/js/index.js"></script>
-    <script src="particle.js" defer></script>
+    
 
     <div class="navbar">
         <img onclick="location.href='index.php';" src='assets/images/logo.png' alt="My" class="appLogo">

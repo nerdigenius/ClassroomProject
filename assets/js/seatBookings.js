@@ -56,10 +56,7 @@
                 "<td style='border: 0; width:auto'>" +
                 "<input type='checkbox' name='' id='checkbox" +
                 i +
-                "'" +
-                "onclick='toggleHighlight(" +
-                i +
-                ")' disabled>" +
+                "'disabled>" +
                 "</td>";
 
               ("</tr>");
@@ -102,10 +99,7 @@
                 "<td style='border: 0; width:auto'>" +
                 "<input type='checkbox' name='' id='checkbox" +
                 i +
-                "'" +
-                "onclick='toggleHighlight(" +
-                i +
-                ")'>" +
+                "'>" +
                 "</td>";
 
               ("</tr>");

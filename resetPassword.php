@@ -18,6 +18,7 @@ $disabled = $email !== '' ? 'disabled' : '';
     <?= csrf_meta(); ?>
     <link rel="stylesheet" href="style.css">
     <title>ClassRoomBooking</title>
+    <script src="particle.js" defer></script>
 </head>
 
 <body>
@@ -54,4 +55,3 @@ $disabled = $email !== '' ? 'disabled' : '';
 </body>
 
 </html>
-<script src="particle.js" defer></script>

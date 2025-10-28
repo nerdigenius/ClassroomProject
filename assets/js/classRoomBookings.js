@@ -9,7 +9,7 @@
       var xhr = new XMLHttpRequest();
       xhr.onreadystatechange = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
-          data = JSON.parse(xhr.responseText);
+          let data = JSON.parse(xhr.responseText);
           let tableHTML =
             " <tr><th style='border:0'>Room Number</th><th style='border:0'>Date</th><th style='border:0'>Time</th><th style='border:0'>Seat Capacity</th><th style='width:20px;background-color:white;border:0'></th></tr>";
           let row = "";
@@ -49,9 +49,7 @@
                 "<input type='checkbox' name='' id='checkbox" +
                 i +
                 "'" +
-                "onclick='toggleHighlight(" +
-                i +
-                ")' disabled>" +
+                "disabled>" +
                 "</td>";
 
               ("</tr>");
@@ -89,10 +87,7 @@
                 "<td style='border: 0; width:auto'>" +
                 "<input type='checkbox' name='' id='checkbox" +
                 i +
-                "'" +
-                "onclick='toggleHighlight(" +
-                i +
-                ")'>" +
+                "'>" +
                 "</td>";
               ("</tr>");
             }
@@ -104,6 +99,7 @@
       };
       xhr.open("POST", "getTableData.php", true);
       xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+      xhr.setRequestHeader("X-CSRF-Token", getCsrf());
       console.log(selectedDate);
       xhr.send("date=" + selectedDate);
     } else {
@@ -168,9 +164,15 @@
     };
     xhr.open("POST", "insertClassRoomBooking.php");
     xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.setRequestHeader("X-CSRF-Token", getCsrf());
     xhr.send(JSON.stringify(selectedRows));
     console.log(selectedRows);
   }
+
+  function getCsrf() {
+  var el = document.querySelector('meta[name="csrf-token"]');
+  return el ? el.getAttribute('content') : '';
+}
 
   document.addEventListener("DOMContentLoaded", function () {
     const table = document.getElementById("mainTable");

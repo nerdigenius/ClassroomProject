@@ -24,6 +24,7 @@ if(empty($_SESSION['2FA_enabled'])){
     <title>ClassRoomBooking</title>
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
       <script src="assets/js/signup.js" defer></script>
+      <script src="particle.js" defer></script>
 </head>
 
 <body>
@@ -69,4 +70,3 @@ if(empty($_SESSION['2FA_enabled'])){
 
 
 </html>
-<script src="particle.js" defer></script>

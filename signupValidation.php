@@ -12,14 +12,7 @@ header('Content-Type: application/json');
 
 $json = file_get_contents('php://input');
 $data = json_decode($json, true);
-// CSRF validation
-if (!csrf_validate()) {
-    echo json_encode([
-        'success' => false,
-        'message' => 'Security check failed'
-    ]);
-    exit();
-}
+require_csrf();
 
 // Must be valid JSON object
 if (!is_array($data)) {
