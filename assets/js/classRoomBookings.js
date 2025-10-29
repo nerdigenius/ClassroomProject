@@ -145,6 +145,11 @@
       }
     }
 
+    if (selectedRows.length === 0) {
+      alert("Please select at least one classroom to book.");
+      return;
+    }
+
     // Send an HTTP request to the server-side script
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function () {
