@@ -1,6 +1,12 @@
 <?php
+declare(strict_types=1);
+
+if (!defined('CRB_BOOTSTRAPPED')) {
+    http_response_code(403);
+    exit();
+}
 return [
-  'APP_ENV'   => 'dev',        // dev | prod
+  'APP_ENV'   => 'prod',        // dev | prod
   'APP_URL'   => 'http://localhost',
 
   // DB
