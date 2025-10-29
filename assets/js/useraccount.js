@@ -153,6 +153,14 @@
     const table = document.getElementById("classRoomTable");
     const table2 = document.getElementById("SeatsTable");
 
+    const logo = document.getElementById("appLogo");
+
+    if (logo) {
+      logo.addEventListener("click", function () {
+        window.location.href = "index.php";
+      });
+    }
+
     table.addEventListener("click", (e) => {
       const btn = e.target.closest(".delete-classroom-btn");
       if (!btn) return;

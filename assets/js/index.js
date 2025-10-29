@@ -38,8 +38,18 @@
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", function () {
       setupPasswordToggle("password", "togglePassword");
+
     });
   } else {
     setupPasswordToggle("password", "togglePassword");
   }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const logo = document.getElementById("appLogo");
+    if (logo) {
+        logo.addEventListener("click", function () {
+            window.location.reload();
+        });
+    }
+  });
 })();

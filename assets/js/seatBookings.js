@@ -187,6 +187,13 @@
   }
 
   document.addEventListener("DOMContentLoaded", function () {
+    const logo = document.getElementById("appLogo");
+
+    if (logo) {
+      logo.addEventListener("click", function () {
+        window.location.reload();
+      });
+    }
     const table = document.getElementById("mainTable");
     table.addEventListener("click", (e) => {
       const btn = e.target.closest("tr");

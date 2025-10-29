@@ -92,6 +92,13 @@
     const pw = document.getElementById("password");
     const re = document.getElementById("retype_password");
     const err = document.getElementById("error");
+    const logo = document.getElementById("appLogo");
+
+    if (logo) {
+      logo.addEventListener("click", function () {
+        window.location.href = "index.php";
+      });
+    }
 
     // on submit button click
     document.getElementById("submitBtn").addEventListener("click", (e) => {

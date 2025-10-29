@@ -43,4 +43,13 @@
       console.error("Error occurred:", error);
     }
   });
+  document.addEventListener("DOMContentLoaded", () => {
+    const logo = document.getElementById("appLogo");
+
+    if (logo) {
+      logo.addEventListener("click", function () {
+        window.location.href = "index.php";
+      });
+    }
+  });
 })();

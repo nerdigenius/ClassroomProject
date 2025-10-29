@@ -78,37 +78,55 @@ $qrUrl = \Sonata\GoogleAuthenticator\GoogleQrUrl::generate(
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>2FA Setup</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2FA Setup</title>
 
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="assets/css/genqrcode.css">
+    <link rel="stylesheet" href="style.css">
 
-  <meta name="csrf-token" content="<?= htmlspecialchars(csrf_token(), ENT_QUOTES) ?>">
-  <script src="assets/js/genqrcode.js" defer></script>
+    <meta name="csrf-token" content="<?= htmlspecialchars(csrf_token(), ENT_QUOTES) ?>">
+    <script src="assets/js/genqrcode.js" defer></script>
+    <script src="particle.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+
 </head>
+
 <body>
-  <div class="twofa-wrapper">
-    <h1>2FA Setup</h1>
-
-    <div class="qr-block">
-      <img src="<?= htmlspecialchars($qrUrl, ENT_QUOTES) ?>" alt="Scan this QR">
+    <div id="particles-js" style="position: absolute;height:100%;width:100%;margin:0;display:flex;"></div>
+    
+    <div class="navbar">
+        <img id="appLogo" src='assets/images/logo.png' alt="My" class="appLogo">
+        <h1>ClassRoom Booking System</h1>
     </div>
+    
+    
+    <div class="login" style="display: flex;flex-direction: column;align-items: center;">
+        <h1>2FA Setup</h1>
+        <!-- Flash container -->
+        <div id="flashBox"></div>
+        <div class="qr-block">
+            <img src="<?= htmlspecialchars($qrUrl, ENT_QUOTES) ?>" alt="Scan this QR">
+        </div>
 
-    <h3>Scan the QR in Google Authenticator / Authy</h3>
-    <p>Then enter the 6-digit code below to complete setup.</p>
+        <p class="username">Scan the QR in Google Authenticator App</p>
+        <p class="username">Then enter the 6-digit code below to complete setup.</p>
 
-    <!-- Flash container -->
-    <div id="flashBox"></div>
 
-    <form id="codeForm" method="POST" action="genqrcode.php">
-      <?= csrf_field(); ?>
-      <label for="codeInput">Enter 6-digit code:</label>
-      <input type="text" id="codeInput" name="code" inputmode="numeric" required>
-      <button type="submit">Confirm</button>
-    </form>
-  </div>
+
+        <form id="codeForm" method="POST" action="genqrcode.php" class="loginItems" style="align-items: center;width: 100%;padding: 0;">
+            <?= csrf_field(); ?>
+            <div class="form-group">
+                <input type="text" id="codeInput" name="code" class="form-control" inputmode="numeric" placeholder=" " required style="align-items: center;width:100%" />
+                <label for="codeInput" class="form-label" for="code">Enter 6-digit code:</label>
+                
+            </div>
+            <button type="submit" style="width: fit-content;padding:10px 20px;margin-top:20px">Confirm</button>
+        </form>
+    </div>
 </body>
+
 </html>

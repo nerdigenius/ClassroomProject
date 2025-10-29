@@ -140,8 +140,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <title>ClassRoomBooking</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
-    <?php require_once __DIR__ . '/config/csrf.php';
-    echo csrf_meta(); ?>
+    <?php echo csrf_meta(); ?>
     <script src="particle.js" defer></script>
 </head>
 
@@ -152,7 +151,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     
 
     <div class="navbar">
-        <img onclick="location.href='index.php';" src='assets/images/logo.png' alt="My" class="appLogo">
+        <img  id='appLogo' src='assets/images/logo.png' alt="My" class="appLogo">
         <h1>ClassRoom Booking System</h1>
     </div>
 

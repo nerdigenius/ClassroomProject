@@ -33,7 +33,7 @@ if (empty($_SESSION['user_id']) || empty($_SESSION['mfa_passed'])) {
     <div id="particles-js" style="position: absolute;height:100%;width:100%;margin:0;display:flex;"></div>
     
     <div class="navbar">
-        <img onclick="location.href='index.php';" src='logo.png' alt="My" class="appLogo">
+        <img id="appLogo"  src='assets/images/logo.png' alt="My" class="appLogo">
         <h1>ClassRoom Booking System</h1>
     </div>
     <div class="userAccount">
