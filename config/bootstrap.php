@@ -97,12 +97,14 @@ header("X-Content-Type-Options: nosniff");
 // you can post forms and set the base URL.
 
 $csp  = "default-src 'self'; ";
+$csp .= "base-uri 'self'; ";
+$csp .= "object-src 'none'; ";
 $csp .= "img-src 'self' data: https://api.qrserver.com/v1/create-qr-code/; ";
 $csp .= "style-src 'self' 'unsafe-inline'; ";
 $csp .= "script-src 'self' https://ajax.googleapis.com https://cdn.jsdelivr.net https://threejs.org; ";
 $csp .= "connect-src 'self'; ";
 $csp .= "frame-ancestors 'self'; ";
-$csp .= "base-uri 'self'; form-action 'self';";
+$csp .= "form-action 'self'; ";
 
 // If we’re on HTTPS, tell browsers to auto-upgrade any http:// subresources.
 
