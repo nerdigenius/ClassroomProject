@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.0
+-- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1:3306
--- Generation Time: Jan 01, 2024 at 07:59 PM
--- Server version: 8.0.31
--- PHP Version: 8.0.26
+-- Host: 127.0.0.1
+-- Generation Time: Oct 30, 2025 at 12:30 AM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -27,28 +27,13 @@ SET time_zone = "+00:00";
 -- Table structure for table `bookings`
 --
 
-DROP TABLE IF EXISTS `bookings`;
-CREATE TABLE IF NOT EXISTS `bookings` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `user_id` int NOT NULL,
-  `booked_item_id` int NOT NULL,
-  `time_slot_id` int NOT NULL,
-  `date` date NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `user_id` (`user_id`),
-  KEY `booked_item_id` (`booked_item_id`),
-  KEY `time_slot_id` (`time_slot_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=54 DEFAULT CHARSET=latin1;
-
---
--- Dumping data for table `bookings`
---
-
-INSERT INTO `bookings` (`id`, `user_id`, `booked_item_id`, `time_slot_id`, `date`) VALUES
-(48, 19, 1, 7, '2023-11-21'),
-(49, 19, 1, 6, '2023-11-21'),
-(52, 21, 1, 9, '2023-11-21'),
-(53, 21, 1, 8, '2023-11-21');
+CREATE TABLE `bookings` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `booked_item_id` int(11) NOT NULL,
+  `time_slot_id` int(11) NOT NULL,
+  `date` date NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- --------------------------------------------------------
 
@@ -56,12 +41,10 @@ INSERT INTO `bookings` (`id`, `user_id`, `booked_item_id`, `time_slot_id`, `date
 -- Table structure for table `classroom`
 --
 
-DROP TABLE IF EXISTS `classroom`;
-CREATE TABLE IF NOT EXISTS `classroom` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `seat_capacity` int NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=latin1;
+CREATE TABLE `classroom` (
+  `id` int(11) NOT NULL,
+  `seat_capacity` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `classroom`
@@ -113,26 +96,13 @@ INSERT INTO `classroom` (`id`, `seat_capacity`) VALUES
 -- Table structure for table `classroombookings`
 --
 
-DROP TABLE IF EXISTS `classroombookings`;
-CREATE TABLE IF NOT EXISTS `classroombookings` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `user_id` int NOT NULL,
-  `booked_item_id` int NOT NULL,
-  `time_slot_id` int NOT NULL,
-  `date` date NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `user_id` (`user_id`),
-  KEY `booked_item_id` (`booked_item_id`),
-  KEY `time_slot_id` (`time_slot_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
-
---
--- Dumping data for table `classroombookings`
---
-
-INSERT INTO `classroombookings` (`id`, `user_id`, `booked_item_id`, `time_slot_id`, `date`) VALUES
-(5, 19, 1, 7, '2023-11-21'),
-(7, 21, 1, 8, '2023-11-21');
+CREATE TABLE `classroombookings` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `booked_item_id` int(11) NOT NULL,
+  `time_slot_id` int(11) NOT NULL,
+  `date` date NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- --------------------------------------------------------
 
@@ -140,13 +110,11 @@ INSERT INTO `classroombookings` (`id`, `user_id`, `booked_item_id`, `time_slot_i
 -- Table structure for table `seats`
 --
 
-DROP TABLE IF EXISTS `seats`;
-CREATE TABLE IF NOT EXISTS `seats` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `room_number` int NOT NULL,
-  `seat_number` int NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=453 DEFAULT CHARSET=latin1;
+CREATE TABLE `seats` (
+  `id` int(11) NOT NULL,
+  `room_number` int(11) NOT NULL,
+  `seat_number` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `seats`
@@ -203,13 +171,11 @@ INSERT INTO `seats` (`id`, `room_number`, `seat_number`) VALUES
 -- Table structure for table `time_slots`
 --
 
-DROP TABLE IF EXISTS `time_slots`;
-CREATE TABLE IF NOT EXISTS `time_slots` (
-  `id` int NOT NULL AUTO_INCREMENT,
+CREATE TABLE `time_slots` (
+  `id` int(11) NOT NULL,
   `start_time` time NOT NULL,
-  `end_time` time NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1;
+  `end_time` time NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `time_slots`
@@ -232,25 +198,101 @@ INSERT INTO `time_slots` (`id`, `start_time`, `end_time`) VALUES
 -- Table structure for table `user`
 --
 
-DROP TABLE IF EXISTS `user`;
-CREATE TABLE IF NOT EXISTS `user` (
-  `id` int NOT NULL AUTO_INCREMENT,
+CREATE TABLE `user` (
+  `id` int(11) NOT NULL,
   `name` varchar(50) NOT NULL,
   `email` varchar(50) NOT NULL,
-  `password` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `password` varchar(255) NOT NULL,
   `secret_key` varchar(256) NOT NULL,
-  `2FA_enabled` tinyint(1) NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=latin1;
+  `2FA_enabled` tinyint(1) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
--- Dumping data for table `user`
+-- Indexes for dumped tables
 --
 
-INSERT INTO `user` (`id`, `name`, `email`, `password`, `secret_key`, `2FA_enabled`) VALUES
-(19, 'asdh@g.com', 'asdh@g.com', '1234', '', 0),
-(21, 'John', 'a@g.com', '$2y$10$HHUiqVMCF.IFOks9LdCBnOXO95lXr5ozycoLFuF8CNzo.dMcSj03a', 'YINMDB6PRSZEK4VK', 1);
+--
+-- Indexes for table `bookings`
+--
+ALTER TABLE `bookings`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user_id` (`user_id`),
+  ADD KEY `booked_item_id` (`booked_item_id`),
+  ADD KEY `time_slot_id` (`time_slot_id`);
+
+--
+-- Indexes for table `classroom`
+--
+ALTER TABLE `classroom`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `classroombookings`
+--
+ALTER TABLE `classroombookings`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user_id` (`user_id`),
+  ADD KEY `booked_item_id` (`booked_item_id`),
+  ADD KEY `time_slot_id` (`time_slot_id`);
+
+--
+-- Indexes for table `seats`
+--
+ALTER TABLE `seats`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `time_slots`
+--
+ALTER TABLE `time_slots`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `user`
+--
+ALTER TABLE `user`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `email` (`email`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `bookings`
+--
+ALTER TABLE `bookings`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=103;
+
+--
+-- AUTO_INCREMENT for table `classroom`
+--
+ALTER TABLE `classroom`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
+
+--
+-- AUTO_INCREMENT for table `classroombookings`
+--
+ALTER TABLE `classroombookings`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=78;
+
+--
+-- AUTO_INCREMENT for table `seats`
+--
+ALTER TABLE `seats`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=453;
+
+--
+-- AUTO_INCREMENT for table `time_slots`
+--
+ALTER TABLE `time_slots`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+
+--
+-- AUTO_INCREMENT for table `user`
+--
+ALTER TABLE `user`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
 
 --
 -- Constraints for dumped tables
