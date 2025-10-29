@@ -31,30 +31,37 @@ $date = $_POST['date'];
 
 
 
-$sql = "SELECT s.id, s.room_number, s.seat_number, sc.seat_capacity, ts.start_time, ts.end_time,
-CASE WHEN b.id IS NOT NULL THEN 'booked' ELSE 'available' END AS status
+//Run query safely
+$stmt = $link->prepare("
+SELECT s.id, s.room_number, s.seat_number, sc.seat_capacity, ts.start_time, ts.end_time,
+       CASE WHEN b.id IS NOT NULL THEN 'booked' ELSE 'available' END AS status
 FROM seats s
 JOIN (
-SELECT room_number, COUNT(*) AS seat_capacity
-FROM seats
-GROUP BY room_number
+  SELECT room_number, COUNT(*) AS seat_capacity
+  FROM seats
+  GROUP BY room_number
 ) sc ON s.room_number = sc.room_number
 CROSS JOIN time_slots ts
-LEFT JOIN bookings b ON s.id = b.booked_item_id AND ts.id = b.time_slot_id AND b.date = '{$date}';
-";
-$result = $link->query($sql);
-// Generate JSON response
-$rows = array();
+LEFT JOIN bookings b
+  ON s.id = b.booked_item_id
+ AND ts.id = b.time_slot_id
+ AND b.date = ?
+");
+$stmt->bind_param('s', $date);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if (!$result) {
+    http_response_code(500);
+    echo json_encode(['error' => 'Database query failed.']);
+    exit();
+}
+
+// 5. Build response
+$rows = [];
 while ($row = $result->fetch_assoc()) {
     $row['date'] = $date;
     $rows[] = $row;
 }
 
-$json_response = json_encode($rows);
-
-// Output the JSON response
-header('Content-Type: application/json');
-echo $json_response;
-
-
-?>
+echo json_encode($rows);

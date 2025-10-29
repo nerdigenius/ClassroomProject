@@ -45,29 +45,49 @@ if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
     exit();
 }
 
-$sql = "SELECT `classroom`.`id`,classroom.seat_capacity,time_slots.start_time,time_slots.end_time, IFNULL(bookings.id, 0) AS booking_id
-FROM `classroom`
-CROSS JOIN `time_slots`
+// Query safely
+$stmt = $link->prepare("
+SELECT classroom.id,
+       classroom.seat_capacity,
+       time_slots.start_time,
+       time_slots.end_time,
+       IFNULL(bookings.id, 0) AS booking_id
+FROM classroom
+CROSS JOIN time_slots
 LEFT JOIN (
-    SELECT `classroombookings`.`id`, `classroombookings`.`time_slot_id`, `classroombookings`.`booked_item_id`
-    FROM `classroombookings`
-    JOIN `time_slots` ON `classroombookings`.`time_slot_id` = `time_slots`.`id`
-    WHERE `classroombookings`.`date` = '{$date}'
-) AS bookings ON `classroom`.`id` = `bookings`.`booked_item_id` AND `time_slots`.`id` = `bookings`.`time_slot_id`";
-$result = $link->query($sql);
-$rows = array();
-if ($result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) {
+    SELECT classroombookings.id,
+           classroombookings.time_slot_id,
+           classroombookings.booked_item_id
+    FROM classroombookings
+    JOIN time_slots ON classroombookings.time_slot_id = time_slots.id
+    WHERE classroombookings.date = ?
+) AS bookings
+  ON classroom.id = bookings.booked_item_id
+ AND time_slots.id = bookings.time_slot_id
+");
+$stmt->bind_param('s', $date);
+$stmt->execute();
+$result = $stmt->get_result();
 
-        $status = ($row['booking_id'] != 0) ? 'booked' : 'available';
-        $rows[] = array(
-            'id' => $row["id"],
-            'date' => $date,
-            'start_time' => $row["start_time"],
-            'end_time' => $row["end_time"],
-            'seat_capacity' => $row["seat_capacity"],
-            'status' => $status
-        );
-    }
+if (!$result) {
+    http_response_code(500);
+    echo json_encode(['error' => 'Database query failed.']);
+    exit();
 }
+
+// 6. Build response
+$rows = [];
+while ($row = $result->fetch_assoc()) {
+    $rows[] = [
+        'id'            => $row['id'],
+        'date'          => $date,
+        'start_time'    => $row['start_time'],
+        'end_time'      => $row['end_time'],
+        'seat_capacity' => $row['seat_capacity'],
+        'status'        => ($row['booking_id'] != 0 ? 'booked' : 'available'),
+    ];
+}
+
+http_response_code(200);
 echo json_encode($rows);
+exit();
