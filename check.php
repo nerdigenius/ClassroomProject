@@ -6,6 +6,20 @@ header('Content-Type: application/json');
 
 require_csrf();
 
+$_SESSION['mfa_attempts'] = $_SESSION['mfa_attempts'] ?? 0;
+$_SESSION['mfa_last']     = $_SESSION['mfa_last']     ?? 0;
+
+function mfa_too_many_attempts(): bool
+{
+    // 5 attempts within 30 seconds -> throttle
+    return $_SESSION['mfa_attempts'] >= 5 && (time() - $_SESSION['mfa_last']) < 30;
+}
+
+if (mfa_too_many_attempts()) {
+    http_response_code(429);
+    echo json_encode(['success' => false, 'message' => 'Too many attempts. Try again later.']);
+    exit();
+}
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Access the posted data sent from the client-side
@@ -15,7 +29,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Extract the code received from the client-side
         $code = $receivedData['code'];
 
-        
+
 
         // Check if the user is logged in
         if (!isset($_SESSION['user_id'])) {
@@ -42,20 +56,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 $g = new \Sonata\GoogleAuthenticator\GoogleAuthenticator();
 
-                
-               
+
+
 
                 // Check the received code against the retrieved secret
                 if ($g->checkCode($secret, $code)) {
-
+                    $_SESSION['mfa_passed'] = true;
+                    $_SESSION['mfa_attempts'] = 0;
+                    $_SESSION['mfa_last']     = time();
                     echo json_encode(['success' => true, 'message' => 'Code verification successful']);
                     // Perform further actions if the code is correct
-                    $_SESSION['mfa_passed'] = true;
+
                 } else {
+                    $_SESSION['mfa_attempts']++;
+                    $_SESSION['mfa_last'] = time();
                     echo json_encode(['success' => false, 'message' => 'Incorrect or expired code']);
-                    // Handle incorrect/expired code scenario
+                    exit();
                 }
             } else {
+                http_response_code(401);
+
                 echo json_encode(['success' => false, 'message' => 'User not found']);
                 // Handle scenario where user ID is invalid or not found
             }

@@ -1,5 +1,7 @@
 (function () {
   const codeForm = document.getElementById("codeForm");
+  const codeInput = document.getElementById("codeInput")
+  if (!codeForm || !codeInput) return; 
 
   function getCsrf() {
     var el = document.querySelector('meta[name="csrf-token"]');
@@ -9,7 +11,9 @@
   codeForm.addEventListener("submit", async (event) => {
     event.preventDefault();
 
-    const codeInput = document.getElementById("codeInput").value;
+    
+
+    
 
     try {
         const csrfToken = getCsrf();
@@ -20,7 +24,7 @@
           "X-CSRF-Token": csrfToken,
         },
         body: JSON.stringify({
-          code: codeInput,
+          code: codeInput.value.trim(),
         }),
       });
 
@@ -34,9 +38,10 @@
         } else {
           window.alert("Incorrect code. Please try again.");
 
-          window.location.href = "logout.php";
+          document.getElementById("codeInput").value = "";
         }
       } else {
+        window.alert("Error: " + result.message);
         console.error("Failed to verify code:", result.message);
       }
     } catch (error) {
@@ -45,6 +50,12 @@
   });
   document.addEventListener("DOMContentLoaded", () => {
     const logo = document.getElementById("appLogo");
+    codeInput.addEventListener('keydown', function(event) {
+      // Allow only numeric input and control keys
+      if (!/^[0-9]$/.test(event.key) && !['Backspace', 'ArrowLeft', 'ArrowRight', 'Delete', 'Tab'].includes(event.key)) {
+        event.preventDefault();
+      }
+    });
 
     if (logo) {
       logo.addEventListener("click", function () {

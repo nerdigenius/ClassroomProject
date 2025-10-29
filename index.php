@@ -1,8 +1,7 @@
 <?php
 
 declare(strict_types=1);
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+
 
 
 require_once __DIR__ . '/config/bootstrap.php';
@@ -68,6 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if (too_many_attempts()) {
         flash_and_redirect('error', 'Please try again later.');
+        usleep(random_int(100000, 300000)); 
     }
     // Collect user input
     $email    = strtolower(trim($_POST['email'] ?? ''));

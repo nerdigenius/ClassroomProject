@@ -22,7 +22,7 @@ $autoload = __DIR__ . '/../vendor/autoload.php';
 if (file_exists($autoload)) require_once $autoload;
 
 // Bring in env() / is_dev() and DB handles
-
+define('CRB_BOOTSTRAPPED', true);
 require_once __DIR__ . '/env.php';
 require_once __DIR__ . '/db.php';
 
@@ -67,6 +67,9 @@ ini_set('session.sid_length', '64');
 ini_set('session.sid_bits_per_character', '6');
 
 // Set cookie attributes. "secure" is based on our HTTPS detection above.
+if ($secure) {
+    ini_set('session.cookie_secure', '1');
+}
 // SameSite=Lax reduces CSRF risk while keeping normal navigation working.
 
 session_set_cookie_params([
@@ -105,6 +108,9 @@ $csp .= "base-uri 'self'; form-action 'self';";
 
 if ($secure) $csp .= " upgrade-insecure-requests;";
 header("Content-Security-Policy: $csp");
+
+//X-Frame-Options fallback
+header("X-Frame-Options: SAMEORIGIN");
 
 // Send only trimmed referrers cross-site, keep full referrers same-site.
 
