@@ -1,6 +1,8 @@
 (function () {
-
-
+  function getCsrf() {
+    var el = document.querySelector('meta[name="csrf-token"]');
+    return el ? el.getAttribute("content") : "";
+  }
   function toggleTable() {
     var dateInput = document.getElementById("setDate");
     var classroomTable = document.getElementById("classroomTable");
@@ -15,7 +17,6 @@
           let tableHTML =
             " <tr><th style='border:0'>Room Number</th><th style='border:0'>Seat Number</th><th style='border:0'>Date</th><th style='border:0'>Time</th><th style='border:0'>Seat Capacity</th><th style='width:20px;background-color:white;border:0'></th></tr>";
           let row = "";
-          console.log(data);
           for (let i = 0; i < data.length; i++) {
             if (data[i].status === "booked") {
               row =
@@ -112,7 +113,7 @@
       };
       xhr.open("POST", "getSeatsTableData.php", true);
       xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-      console.log(selectedDate);
+      xhr.setRequestHeader("X-CSRF-Token", getCsrf());
       xhr.send("date=" + selectedDate);
     } else {
       classroomTable.style.display = "none";
@@ -169,21 +170,21 @@
     xhr.onreadystatechange = function () {
       if (xhr.readyState === XMLHttpRequest.DONE) {
         if (xhr.status === 200) {
-          console.log(xhr.responseText);
-          console.log("send success!!!");
+          
           location.href = "useraccount.php";
           // Insertion successful, update the UI accordingly
         } else {
           console.error(xhr.statusText);
-          console.log("send failed!!!");
+          
           // Insertion failed, show an error message
         }
       }
     };
     xhr.open("POST", "insertSeatBookings.php");
     xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.setRequestHeader("X-CSRF-Token", getCsrf());
     xhr.send(JSON.stringify(selectedRows));
-    console.log(selectedRows);
+    
   }
 
   document.addEventListener("DOMContentLoaded", function () {

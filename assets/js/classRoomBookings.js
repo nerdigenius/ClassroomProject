@@ -100,7 +100,6 @@
       xhr.open("POST", "getTableData.php", true);
       xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
       xhr.setRequestHeader("X-CSRF-Token", getCsrf());
-      console.log(selectedDate);
       xhr.send("date=" + selectedDate);
     } else {
       classroomTable.style.display = "none";
@@ -151,13 +150,11 @@
     xhr.onreadystatechange = function () {
       if (xhr.readyState === XMLHttpRequest.DONE) {
         if (xhr.status === 200) {
-          console.log(xhr.responseText);
-          console.log("send success!!!");
+         
           location.href = "useraccount.php";
           // Insertion successful, update the UI accordingly
         } else {
           console.error(xhr.statusText);
-          console.log("send failed!!!");
           // Insertion failed, show an error message
         }
       }
@@ -166,7 +163,6 @@
     xhr.setRequestHeader("Content-Type", "application/json");
     xhr.setRequestHeader("X-CSRF-Token", getCsrf());
     xhr.send(JSON.stringify(selectedRows));
-    console.log(selectedRows);
   }
 
   function getCsrf() {

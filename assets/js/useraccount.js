@@ -58,7 +58,6 @@
       start_time: start_time,
     });
 
-    console.log(selectedRows);
 
     // Send an HTTP request to the server-side script
     var xhr = new XMLHttpRequest();
@@ -66,17 +65,13 @@
       if (xhr.readyState === XMLHttpRequest.DONE) {
         if (xhr.status === 200) {
           var response = JSON.parse(xhr.responseText);
-          console.log(response["success"]);
-          // console.log("send success!!!")
           if (response["success"] === true) {
             row.remove();
           }
-          //console.log(xhr.responseText)
           //location.href = 'useraccount.php'
           // Insertion successful, update the UI accordingly
         } else {
           console.error(xhr.statusText);
-          console.log("send failed!!!");
           // Insertion failed, show an error message
         }
       }
@@ -121,7 +116,6 @@
     //     start_time: start_time,
     // });
 
-    console.log(selectedRows);
 
     // Send an HTTP request to the server-side script
     var xhr = new XMLHttpRequest();
@@ -129,8 +123,6 @@
       if (xhr.readyState === XMLHttpRequest.DONE) {
         if (xhr.status === 200) {
           var response = JSON.parse(xhr.responseText);
-          console.log(response["success"]);
-          console.log("send success!!!");
           if (response["success"] === true) {
             row.remove();
           }
@@ -138,7 +130,6 @@
           // Insertion successful, update the UI accordingly
         } else {
           console.error(xhr.statusText);
-          console.log("send failed!!!");
           // Insertion failed, show an error message
         }
       }
@@ -147,7 +138,6 @@
     xhr.setRequestHeader("Content-Type", "application/json");
     xhr.setRequestHeader("X-CSRF-Token", getCsrf());
     xhr.send(JSON.stringify(selectedRows));
-    console.log(selectedRows);
   }
   document.addEventListener("DOMContentLoaded", () => {
     const table = document.getElementById("classRoomTable");

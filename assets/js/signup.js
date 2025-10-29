@@ -66,12 +66,11 @@
                 window.alert(response["message"]);
               }
 
-              //console.log(xhr.responseText)
+              
               //location.href = 'useraccount.php'
               // Insertion successful, update the UI accordingly
             } else {
               console.error(xhr.statusText);
-              console.log("send failed!!!");
               // Insertion failed, show an error message
             }
           } 

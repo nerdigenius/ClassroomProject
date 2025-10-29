@@ -26,7 +26,6 @@
           password: password,
           retype_password: retype_password,
         });
-        console.log(selectedRows);
 
         //read the CSRF token from the meta tag we added
 
@@ -39,19 +38,16 @@
           if (xhr.readyState === XMLHttpRequest.DONE) {
             if (xhr.status === 200) {
               var response = JSON.parse(xhr.responseText);
-              console.log(response["success"]);
               if (response.success) {
                 location.href = "useraccount.php";
               } else {
                 window.alert(response["message"]);
               }
 
-              // console.log(xhr.responseText)
               //location.href = 'useraccount.php'
               // Insertion successful, update the UI accordingly
             } else {
               console.error(xhr.statusText);
-              console.log("send failed!!!");
               // Insertion failed, show an error message
             }
           }
@@ -61,7 +57,6 @@
         //send the CSRF token in the header that csrf.php expects
         xhr.setRequestHeader("X-CSRF-Token", csrfToken);
         xhr.send(JSON.stringify(selectedRows));
-        console.log(selectedRows);
       } else {
         window.alert("Invalid Email!!!");
       }
