@@ -180,7 +180,7 @@
 
     if (logo) {
       logo.addEventListener("click", function () {
-        window.location.reload();
+        window.location.href = "index.php";
       });
     }
 
