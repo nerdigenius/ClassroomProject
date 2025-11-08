@@ -1,1 +1,181 @@
-# ClassroomProject
+# 🎓 ClassRoom Booking System
+
+A lightweight and secure PHP + MySQL web app that lets users sign up, log in, and book classrooms or individual seats.  
+It features **strong web security**, **responsive design**, and **AJAX interactivity** for smooth user experience.
+
+---
+
+## 🚀 Features
+
+- 🔐 **Authentication**
+  - Secure login/signup using prepared SQL statements.
+  - Enforced session hardening and CSRF protection.
+  - Two-Factor Authentication (2FA) using Google Authenticator.
+- 🧠 **Security-First Design**
+  - Content Security Policy (CSP) restricting scripts and data sources.
+  - CSRF tokens (for both form and JSON/AJAX requests).
+  - HSTS, Referrer-Policy, Permissions-Policy headers.
+  - Secure sessions (`httponly`, `SameSite=Lax`, proxy-aware `secure` cookies).
+- 🗃️ **Database Safety**
+  - MySQL with parameterized queries.
+  - Supports both PDO and mysqli (transition mode).
+  - UTF-8MB4 throughout.
+- 💻 **Responsive UI**
+  - Built with modern CSS for both desktop and mobile.
+  - Smooth background animation (`particles.js`).
+  - AJAX-powered booking tables.
+- ⚙️ **Environment-based configuration**
+  - `.env.php` for production secrets (never committed to VCS).
+  - `.env.example.php` as template for developers.
+- 🧩 **Modular Structure**
+  - Clean separation of config, assets, JS modules, and PHP endpoints.
+
+---
+
+## 🧱 Project Structure
+
+```
+CLASSROOMPROJECT/
+│
+├── assets/
+│   ├── images/                # Logos and SVG illustrations
+│   └── js/                    # Frontend JS modules (login, booking, etc.)
+│
+├── config/                    # Configuration and bootstrap files
+│   ├── .env.example.php
+│   ├── .env.php
+│   ├── bootstrap.php          # Starts session, loads env, CSP, security headers
+│   ├── csrf.php               # CSRF token utilities and validators
+│   ├── db.php                 # PDO + mysqli database adapter
+│   └── env.php                # env() helper and environment loader
+│
+├── vendor/                    # Composer dependencies (Google Authenticator)
+│
+├── *.php                      # App endpoints
+│   ├── index.php              # Login page with CSRF + session protection
+│   ├── signup.php             # Secure signup endpoint
+│   ├── twofactor.php          # 2FA verification handler
+│   ├── useraccount.php        # Protected dashboard (requires 2FA)
+│   ├── seatBookings.php       # Seat booking management
+│   ├── classRoomBookings.php  # Classroom booking management
+│   ├── logout.php             # Secure logout
+│   └── resetPassword.php      # Password reset form
+│
+├── style.css                  # Global responsive styles
+├── particle.js / particle.css  # Background animation
+├── classroomBooking.sql       # Database schema
+├── composer.json              # Dependencies metadata
+└── README.md
+```
+
+---
+
+## 🧩 Database Schema
+
+**Database:** `classroombooking`
+
+Main tables:
+
+| Table | Purpose |
+|-------|----------|
+| `user` | Stores user credentials, hashed passwords, 2FA flag |
+| `classroom_booking` | Records classroom reservations |
+| `seat_booking` | Records individual seat bookings |
+
+---
+
+## ⚙️ Installation
+
+### 1️⃣ Prerequisites
+- PHP ≥ 8.1
+- MySQL ≥ 5.7 / MariaDB ≥ 10.4
+- Composer
+
+### 2️⃣ Clone & Install
+```bash
+git clone https://github.com/nerdigenius/ClassRoomBooking.git
+cd ClassRoomBooking
+composer install
+```
+
+### 3️⃣ Configure Environment
+Copy `.env.example.php` → `.env.php` and edit the values:
+```php
+return [
+  'APP_ENV'   => 'prod',
+  'APP_URL'   => 'https://yourdomain.com',
+
+  'DB_DRIVER' => 'mysql',
+  'DB_HOST'   => '127.0.0.1',
+  'DB_PORT'   => '3306',
+  'DB_NAME'   => 'classroombooking',
+  'DB_USER'   => 'root',
+  'DB_PASS'   => 'your-password',
+
+  'SESSION_NAME' => 'crb_session',
+];
+```
+
+### 4️⃣ Import Database
+Create the schema and import the SQL file:
+```bash
+mysql -u root -p classroombooking < classroomBooking.sql
+```
+
+### 5️⃣ Run Locally
+Start PHP’s built-in server:
+```bash
+php -S localhost:8000
+```
+Then visit **http://localhost:8000**
+
+---
+
+## 🔒 Security Notes
+
+- Uses **prepared statements** everywhere to prevent SQL injection.
+- Strong **Content-Security-Policy** and **HSTS** in production.
+- CSRF token tied to session + User-Agent.
+- Session cookies hardened with `secure`, `httponly`, and `SameSite=Lax`.
+- HTTPS is **required** for production — never deploy over plain HTTP.
+- Logs (`php-error.log`) are placed outside the web root when deployed.
+
+---
+
+## 🧰 Deployment
+
+### ✅ Recommended free host
+- [InfinityFree](https://www.infinityfree.net/)
+  - Upload the project files under `/htdocs`.
+  - Create a MySQL database from the control panel.
+  - Update `.env.php` credentials.
+  - Ensure SSL (https://) is enabled to enforce secure cookies.
+
+### 🔐 Production tweaks
+- Set `APP_ENV => 'prod'`.
+- Verify all API requests go over HTTPS.
+
+---
+
+## 📦 Dependencies
+
+| Library | Purpose |
+|----------|----------|
+| `sonata-project/google-authenticator` | Google Authenticator 2FA |
+| `particles.js` | Animated login background |
+| PHP built-ins | PDO, session, JSON, password hashing |
+
+---
+
+## 🧑‍💻 Author
+
+**Mir Ashiqul Hossain**  
+Full-stack developer passionate about secure web apps.  
+📧 ashiq.upwork.profile@gmail.com
+
+---
+
+## 🪪 License
+
+This project is proprietary and closed source.  
+For personal learning or demonstration use only.
