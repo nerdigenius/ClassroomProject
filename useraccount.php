@@ -34,7 +34,7 @@ if (empty($_SESSION['user_id']) || empty($_SESSION['mfa_passed'])) {
 </head>
 
 <body>
-    <div id="particles-js" style="position: absolute;height:100%;width:100%;margin:0;display:flex;"></div>
+    <div id="particles-js"></div>
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     
     <div class="navbar">
@@ -44,10 +44,10 @@ if (empty($_SESSION['user_id']) || empty($_SESSION['mfa_passed'])) {
     <div class="userAccount">
         <div class="userinfo">
             <img src="assets/images/userAccount.svg" class="userIcon" alt="">
-            <div style="margin-left: 20px;display:flex;flex-direction:column;justify-content: space-evenly;">
-                <span class="username">Username: <?php echo $user_name ?></span>
-                <button id="reset_password" style="width: 200px;margin-bottom:10px">Reset Password</button>
-                <form action="logout.php" method="POST" style="width: fit-content;"> <?= csrf_field(); ?><button type="submit" style="width: 200px">Logout</button></form>
+            <div class="user-info-details">
+                <span class="username">Username:<?= htmlspecialchars($user_name, ENT_QUOTES, 'UTF-8') ?></span>
+                <button id="reset_password" class="btn-reset-password">Reset Password</button>
+                <form action="logout.php" method="POST" class="logout-form"> <?= csrf_field(); ?><button type="submit" class="btn-logout">Logout</button></form>
                 <?php if ($_SESSION['2FA_enabled'] == 0) {
                     echo '<a href="genqrcode.php">Enable 2FA?</a>';
                 } ?>
@@ -57,7 +57,7 @@ if (empty($_SESSION['user_id']) || empty($_SESSION['mfa_passed'])) {
         <div>
             <span class="tableHeader">Booked Classrooms: </span>
             <table id="classRoomTable">
-                <tbody style="height: fit-content;max-height:400px;">
+                <tbody class="tbody-limited">
                     <tr>
                         <th>Room Number</th>
                         <th>Date</th>
@@ -100,7 +100,7 @@ if (empty($_SESSION['user_id']) || empty($_SESSION['mfa_passed'])) {
         <div>
             <span class="tableHeader">Booked Class Seats: </span>
             <table id="SeatsTable">
-                <tbody style="height: fit-content;max-height:400px;">
+                <tbody class="tbody-limited">
                     <tr>
                         <th>Seat Number</th>
                         <th>Room Number</th>
@@ -145,8 +145,8 @@ if (empty($_SESSION['user_id']) || empty($_SESSION['mfa_passed'])) {
 
             </table>
         </div>
-        <div style="display:flex;margin-top: 20px;justify-content:flex-end;width:100%">
-            <button style="width: 100px;" id="popup">Add More</button>
+        <div class="footer-actions">
+            <button class="btn-small" id="popup">Add More</button>
         </div>
 
     </div>
@@ -155,7 +155,7 @@ if (empty($_SESSION['user_id']) || empty($_SESSION['mfa_passed'])) {
         <div class="popup">
             <span class="popupSpan">What kind of bookings do you want to make?</span>
 
-            <div style="display: flex;justify-content:space-evenly">
+            <div class="popup-buttons-row">
                 <button class="popupButton" id="ClassRoomBtn" >Classroom</button>
                 <button class="popupButton" id="SeatsBtn">Seats</button>
             </div>

@@ -99,8 +99,16 @@
       };
       xhr.open("POST", "getTableData.php", true);
       xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-      xhr.setRequestHeader("X-CSRF-Token", getCsrf());
-      xhr.send("date=" + selectedDate);
+      // Send CSRF token both as a header and in the body so it works
+      // even on environments that strip custom headers.
+      const token = getCsrf();
+      xhr.setRequestHeader("X-CSRF-Token", token);
+      xhr.send(
+        "date=" +
+          encodeURIComponent(selectedDate) +
+          "&csrf_token=" +
+          encodeURIComponent(token)
+      );
     } else {
       classroomTable.style.display = "none";
       classroomTableBody.innerHTML = "";
@@ -166,8 +174,15 @@
     };
     xhr.open("POST", "insertClassRoomBooking.php");
     xhr.setRequestHeader("Content-Type", "application/json");
-    xhr.setRequestHeader("X-CSRF-Token", getCsrf());
-    xhr.send(JSON.stringify(selectedRows));
+    const token = getCsrf();
+    xhr.setRequestHeader("X-CSRF-Token", token);
+    // Include csrf_token in the JSON body as well for maximum compatibility.
+    xhr.send(
+      JSON.stringify({
+        csrf_token: token,
+        rows: selectedRows,
+      })
+    );
   }
 
   function getCsrf() {

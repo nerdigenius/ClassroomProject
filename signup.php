@@ -28,7 +28,7 @@ if(empty($_SESSION['2FA_enabled'])){
 </head>
 
 <body>
-    <div id="particles-js" style="position: absolute;height:100%;width:100%;margin:0;display:flex;"></div>
+    <div id="particles-js"></div>
     
     <div class="navbar">
         <img id="appLogo" src='assets/images/logo.png' alt="My" class="appLogo">
@@ -36,7 +36,7 @@ if(empty($_SESSION['2FA_enabled'])){
     </div>
     <div class="login">
 
-        <div style="width: 100%; display: flex; justify-content: center; height: auto;padding:5% 20%" class="signupItems">
+        <div class="signupItems">
             <div class="loginform">
                 <p class="textTop">Signup</p>
                 <div class="form-group">
@@ -55,13 +55,13 @@ if(empty($_SESSION['2FA_enabled'])){
                     <input type="password" id="retype_password" name="retype_password" class="form-control" placeholder=" "  required />
                     <label for="retype_password" class="form-label">Re-type Password</label>
                 </div>
-                <span style="color: red;display:none" id="error">Password does not match</span>
+                <span id="error">Password does not match</span>
 
                 <div class="form-group">
-                    <label for="enableAuthenticator" class="username" style="font-size: 18px;">Enable Authenticator?</label>
+                    <label for="enableAuthenticator" class="username">Enable Authenticator?</label>
                     <input type="checkbox" id="enableAuthenticator" name="enableAuthenticator" value="true" />
                 </div>
-                <button style="width: 100%;" id="submitBtn" >Submit</button>
+                <button class="btn-fullwidth" id="submitBtn" >Submit</button>
 
             </div>
         </div>

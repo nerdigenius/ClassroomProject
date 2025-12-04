@@ -44,6 +44,13 @@ if (
     full_reset_session();
 }
 
+// For the login page, always issue a fresh CSRF token on each GET so that
+// any browser refresh shows a token that exactly matches the current session.
+if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    unset($_SESSION['csrf_token'], $_SESSION['csrf_issued_at'], $_SESSION['csrf_user_agent']);
+    csrf_token(); // regenerate
+}
+
 // Basic per-IP / per-session throttle (bump for failures only)
 $_SESSION['login_attempts'] = $_SESSION['login_attempts'] ?? 0;
 $_SESSION['login_last']     = $_SESSION['login_last']     ?? 0;
@@ -145,7 +152,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 
 <body>
-    <div id="particles-js" style="position: absolute;height:100%;width:100%;margin:0;display:flex;"></div>
+    <div id="particles-js"></div>
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script src="assets/js/index.js"></script>
     
@@ -162,7 +169,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <p class="textClass">Book your classroom now!</p>
             </div>
             <div class="loginLogoBackGround">
-                <img src="assets/images/loginLogo.svg" style="width: 100%; height: auto" />
+                <img src="assets/images/loginLogo.svg" />
             </div>
 
             <div class="textClass">
@@ -178,7 +185,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </div>
             <?php endif; ?>
             <?= csrf_field(); ?>
-            <div style="width: 100%; display: flex; justify-content: center; height: 50%">
+            <div class="flex-center-half">
                 <div class="loginform">
                     <div class="form-group">
                         <input type="email" id="email" class="form-control" placeholder=" " name="email" />
@@ -219,14 +226,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 stroke-width="2">
                             </circle>
                             <!-- slash -->
-                            <path id="pwSlash" style="display:none;" d="M3 3l18 18" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                            <path id="pwSlash" d="M3 3l18 18" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
                         </svg>
 
-                        <span id="pwText" style="margin: 0 10px;">Show Password</span>
+                        <span id="pwText">Show Password</span>
                     </button>
                 </div>
             </div>
-            <div style="width: 100%;display: flex;justify-content: space-evenly;align-items:center;flex-direction: column;height: 50%;">
+            <div class="flex-column-center-half">
                 <button id='login' type="submit" name="submit">Login</button>
                 <button id="signup" type="submit" formaction="signup.php" formmethod="get" formnovalidate>Sign Up</button>
 

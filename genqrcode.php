@@ -96,7 +96,7 @@ $qrUrl = \Sonata\GoogleAuthenticator\GoogleQrUrl::generate(
 </head>
 
 <body>
-    <div id="particles-js" style="position: absolute;height:100%;width:100%;margin:0;display:flex;"></div>
+    <div id="particles-js"></div>
     
     <div class="navbar">
         <img id="appLogo" src='assets/images/logo.png' alt="My" class="appLogo">
@@ -104,7 +104,7 @@ $qrUrl = \Sonata\GoogleAuthenticator\GoogleQrUrl::generate(
     </div>
     
     
-    <div class="login" style="display: flex;flex-direction: column;align-items: center;height: fit-content;position: relative;z-index: 1;padding: 20px;">
+    <div class="login qr-login">
         <h1>2FA Setup</h1>
         <!-- Flash container -->
         <div id="flashBox"></div>
@@ -114,18 +114,18 @@ $qrUrl = \Sonata\GoogleAuthenticator\GoogleQrUrl::generate(
 
         <p class="username" >Scan the QR in Google Authenticator App</p>
         <p class="username" >Then enter the 6-digit code below to complete setup.</p>
-        <p class="username" >Download <img src="assets/images/authenticator.svg" style="height: 25px;" alt=""> GoogleAuthenticator <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&pcampaignid=web_share" style="font-size: x-large;"  target="_blank" >here</a></p>
+        <p class="username" >Download <img src="assets/images/authenticator.svg" class="authenticator-inline-icon" alt=""> GoogleAuthenticator <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&pcampaignid=web_share" class="download-link-large"  target="_blank" >here</a></p>
 
 
 
-        <form id="codeForm" method="POST" action="genqrcode.php" class="loginItems" style="align-items: center;width: 100%;">
+        <form id="codeForm" method="POST" action="genqrcode.php" class="loginItems code-form">
             <?= csrf_field(); ?>
             <div class="form-group">
-                <input type="text" id="codeInput" name="code" class="form-control" inputmode="numeric" placeholder=" " required style="align-items: center;width:100%" />
+                <input type="text" id="codeInput" name="code" class="form-control code-input" inputmode="numeric" placeholder=" " required />
                 <label for="codeInput" class="form-label" for="code">Enter 6-digit code:</label>
                 
             </div>
-            <button type="submit" style="width: fit-content;padding:10px 20px;margin:20px 0">Confirm</button>
+            <button type="submit" class="btn-fit">Confirm</button>
         </form>
     </div>
 </body>

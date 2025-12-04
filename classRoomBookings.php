@@ -30,7 +30,7 @@ if (empty($_SESSION['user_id']) || empty($_SESSION['mfa_passed'])) {
 </head>
 
 <body>
-    <div id="particles-js" style="position: absolute;height:100%;width:100%;margin:0;display:flex;"></div>
+    <div id="particles-js"></div>
     
     <div class="navbar">
         <img id="appLogo"  src='assets/images/logo.png' alt="My" class="appLogo">
@@ -42,7 +42,7 @@ if (empty($_SESSION['user_id']) || empty($_SESSION['mfa_passed'])) {
             <label for="setDate">Select a date:</label>
             <input type="date" id="setDate" name="setDate" >
         </div>
-        <div div id="classroomTable" style="display:none;">
+        <div div id="classroomTable">
 
             <span class="tableHeader">Classrooms list:</span>
 
@@ -63,8 +63,8 @@ if (empty($_SESSION['user_id']) || empty($_SESSION['mfa_passed'])) {
                 </tbody>
 
             </table>
-            <div style="display: flex;width:100%;justify-content: flex-end;margin-top:40px">
-                <button style="width: 100px;justify-content:flex-end" id="submitBtn">Done!</button>
+            <div class="flex-end-row">
+                <button class="btn-small" id="submitBtn">Done!</button>
             </div>
         </div>
     </div>

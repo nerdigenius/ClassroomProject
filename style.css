@@ -10,10 +10,16 @@ body {
   align-items: center;
   position: relative;
   min-height: 100%;
-  min-width: 100%;
-  width: fit-content;
-  height: fit-content;
   z-index: 0;
+}
+
+/* Shared background particles container used on multiple pages */
+#particles-js {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  display: flex;
 }
 html {
   height: 100%;
@@ -76,6 +82,7 @@ html {
   top: 200px;
   filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
   min-width: 250px;
+  min-height: fit-content;
 }
 .loginLogo {
   display: flex;
@@ -101,6 +108,12 @@ html {
   width: 100%;
   height: 50%;
   justify-content: center;
+}
+
+/* Ensure logo inside the login background scales responsively */
+.loginLogoBackGround img {
+  width: 100%;
+  height: auto;
 }
 
 .loginform {
@@ -253,6 +266,169 @@ h1 {
   justify-content: space-around;
   flex-direction: column;
   padding: 3%;
+}
+
+/* Signup / reset wrapper (previously inline styles) */
+.signupItems {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  height: auto;
+  padding: 5% 20%;
+}
+
+/* Generic containers extracted from inline styles */
+.flex-center-half {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  height: 50%;
+}
+
+.flex-column-center-half {
+  width: 100%;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  flex-direction: column;
+  height: 50%;
+}
+
+.flex-end-row {
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
+  margin-top: 40px;
+}
+
+.footer-actions {
+  display: flex;
+  margin-top: 20px;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+.user-info-details {
+  margin-left: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+}
+
+/* Error text for password mismatch */
+#error {
+  color: red;
+  display: none;
+}
+
+/* Specific label tweak used on signup page */
+label[for="enableAuthenticator"] {
+  font-size: 18px;
+}
+
+/* Buttons extracted from inline styles */
+.btn-fullwidth {
+  width: 100%;
+}
+
+.btn-halfwidth {
+  width: 50%;
+}
+
+.btn-small {
+  width: 100px;
+}
+
+.btn-fit {
+  width: fit-content;
+  padding: 10px 20px;
+  margin: 20px 0;
+}
+
+.btn-reset-password {
+  width: 200px;
+  margin-bottom: 10px;
+}
+
+.btn-logout {
+  width: 200px;
+}
+
+/* Two-factor and QR setup layout helpers */
+.twofactor-form {
+  align-items: center;
+  flex-direction: column;
+  justify-content: space-around;
+  padding: 1%;
+}
+
+.textClassBlue {
+  color: #3a3fc1;
+}
+
+.authenticator-hero {
+  width: auto;
+  height: 40%;
+  max-width: 400px;
+}
+
+.form-group-wide {
+  width: 80%;
+}
+
+.buttons-column {
+  width: 100%;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  flex-direction: column;
+}
+
+.qr-login {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: fit-content;
+  position: relative;
+  z-index: 1;
+  padding: 20px;
+}
+
+.authenticator-inline-icon {
+  height: 25px;
+}
+
+.download-link-large {
+  font-size: x-large;
+}
+
+.code-form {
+  align-items: center;
+  width: 100%;
+}
+
+.code-input {
+  width: 100%;
+}
+
+.popup-buttons-row {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.tbody-limited {
+  height: fit-content;
+  max-height: 400px;
+}
+
+/* SVG eye icon slash hidden by default (was inline style) */
+#pwSlash {
+  display: none;
+}
+
+/* Password toggle text spacing (was inline style) */
+#pwText {
+  margin: 0 10px;
 }
 
 .popupContainer {

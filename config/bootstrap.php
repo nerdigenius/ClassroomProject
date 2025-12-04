@@ -93,13 +93,15 @@ if (session_status() === PHP_SESSION_NONE) session_start();
 header("X-Content-Type-Options: nosniff");
 
 // Content Security Policy: allow only your own origin by default,
-// specific script CDNs, inline styles (for now), and restrict where
-// you can post forms and set the base URL.
+// specific script CDNs, inline styles (for now, via style-src), and
+// restrict where you can post forms and set the base URL.
 
 $csp  = "default-src 'self'; ";
 $csp .= "base-uri 'self'; ";
 $csp .= "object-src 'none'; ";
 $csp .= "img-src 'self' data: https://api.qrserver.com/v1/create-qr-code/; ";
+// Allow styles from this origin and keep inline CSS working for now.
+// NOTE: 'unsafe-inline' here applies only to CSS, not to scripts.
 $csp .= "style-src 'self' 'unsafe-inline'; ";
 $csp .= "script-src 'self' https://ajax.googleapis.com https://cdn.jsdelivr.net https://threejs.org; ";
 $csp .= "connect-src 'self'; ";

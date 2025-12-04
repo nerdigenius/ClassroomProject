@@ -18,11 +18,15 @@ require_csrf();
 $json = file_get_contents('php://input');
 $data = json_decode($json, true);
 
+// Support both old shape: [ {...}, {...} ]
+// and new shape: { csrf_token: \"...\", rows: [ {...}, {...} ] }
 if (!is_array($data) || empty($data)) {
     http_response_code(400);
     echo json_encode(['success' => false, 'message' => 'Invalid or empty JSON payload']);
     exit();
 }
+
+$rowsPayload = isset($data['rows']) && is_array($data['rows']) ? $data['rows'] : $data;
 
 $user_id = (int)$_SESSION['user_id'];
 $results = [];
@@ -38,7 +42,7 @@ try {
     $insert  = $link->prepare("INSERT INTO bookings (user_id, booked_item_id, time_slot_id, date)
                                VALUES (?, ?, ?, ?)");
 
-    foreach ($data as $row) {
+    foreach ($rowsPayload as $row) {
         $roomNumber = $row['roomNumber'] ?? null;
         $seatNumber = $row['seat_number'] ?? null;
         $date       = $row['date'] ?? null;

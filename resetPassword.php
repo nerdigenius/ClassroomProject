@@ -21,7 +21,7 @@ $disabled = $email !== '' ? 'disabled' : '';
 
 <body>
     <script src="assets/js/resetPassword.js" defer></script>
-    <div id="particles-js" style="position: absolute;height:100%;width:100%;margin:0;display:flex;"></div>
+    <div id="particles-js"></div>
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <div class="navbar">
         <img id="appLogo" src='assets/images/logo.png' alt="My" class="appLogo">
@@ -29,7 +29,7 @@ $disabled = $email !== '' ? 'disabled' : '';
     </div>
     <div class="login">
 
-        <div style="width: 100%; display: flex; justify-content: center; height: auto;padding:5% 20%" class="signupItems">
+        <div class="signupItems">
             <div class="loginform">
                 <p class="textTop">Reset Password</p>
                 <div class="form-group">
@@ -44,8 +44,8 @@ $disabled = $email !== '' ? 'disabled' : '';
                     <input type="password" id="retype_password" name="retype_password" class="form-control" placeholder=" "  autocomplete="new-password"  />
                     <label for="retype_password" class="form-label">Re-type Password</label>
                 </div>
-                <span style="color: red;display:none" id="error">Password does not match</span>
-                <button style="width: 100%;" id="submitBtn" >Submit</button>
+                <span id="error">Password does not match</span>
+                <button class="btn-fullwidth" id="submitBtn" >Submit</button>
 
             </div>
         </div>

@@ -113,8 +113,15 @@
       };
       xhr.open("POST", "getSeatsTableData.php", true);
       xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-      xhr.setRequestHeader("X-CSRF-Token", getCsrf());
-      xhr.send("date=" + selectedDate);
+      // Send CSRF token in both header and body for robustness.
+      const token = getCsrf();
+      xhr.setRequestHeader("X-CSRF-Token", token);
+      xhr.send(
+        "date=" +
+          encodeURIComponent(selectedDate) +
+          "&csrf_token=" +
+          encodeURIComponent(token)
+      );
     } else {
       classroomTable.style.display = "none";
       classroomTableBody.innerHTML = "";
@@ -187,8 +194,14 @@
     };
     xhr.open("POST", "insertSeatBookings.php");
     xhr.setRequestHeader("Content-Type", "application/json");
-    xhr.setRequestHeader("X-CSRF-Token", getCsrf());
-    xhr.send(JSON.stringify(selectedRows));
+    const token = getCsrf();
+    xhr.setRequestHeader("X-CSRF-Token", token);
+    xhr.send(
+      JSON.stringify({
+        csrf_token: token,
+        rows: selectedRows,
+      })
+    );
     
   }
 
