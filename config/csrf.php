@@ -25,7 +25,6 @@ function csrf_token(): string
     ) {
         $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
         $_SESSION['csrf_issued_at'] = $now;
-        $_SESSION['csrf_user_agent'] = $_SERVER['HTTP_USER_AGENT'] ?? '';
     }
     return $_SESSION['csrf_token'];
 }
@@ -104,13 +103,6 @@ function csrf_validate(array $methods = ['POST', 'PUT', 'PATCH', 'DELETE']): boo
 
 
     if (empty($_SESSION['csrf_token']) || empty($_SESSION['csrf_issued_at'])) return false;
-
-    if (isset($_SESSION['csrf_user_agent']) && $_SESSION['csrf_user_agent'] !== '') {
-        $currUA = $_SERVER['HTTP_USER_AGENT'] ?? '';
-        if ($currUA !== $_SESSION['csrf_user_agent']) {
-            return false;
-        }
-    }
 
 
 

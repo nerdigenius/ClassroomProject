@@ -111,10 +111,16 @@ try {
 } catch (Throwable $e) {
     $link->rollback();
     http_response_code(400);
-    echo json_encode([
+
+    // Log internal details server-side; avoid exposing them to clients.
+    error_log('DeleteClassRoom error: ' . $e->getMessage());
+    $payload = [
         'success' => false,
         'message' => 'Delete failed',
-        'error'   => $e->getMessage()
-    ]);
+    ];
+    if (function_exists('is_dev') && is_dev()) {
+        $payload['detail'] = $e->getMessage();
+    }
+    echo json_encode($payload);
 }
     // Do something with the data

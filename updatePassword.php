@@ -75,14 +75,15 @@ if ($password !== $retype_password) {
     exit();
 }
 
-// if (strlen($password) < 8) {
-//     http_response_code(422);
-//     echo json_encode([
-//         'success' => false,
-//         'message' => 'Password must be at least 8 characters.'
-//     ]);
-//     exit();
-// }
+// Enforce a minimum password length consistent with signup.
+if (strlen($password) < 8) {
+    http_response_code(422);
+    echo json_encode([
+        'success' => false,
+        'message' => 'Password must be at least 8 characters.'
+    ]);
+    exit();
+}
 
 // Confirm account exists
 $sqlCheck = "SELECT id FROM user WHERE email = ? LIMIT 1";

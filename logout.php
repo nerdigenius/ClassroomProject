@@ -2,13 +2,17 @@
 declare(strict_types=1);
 ob_start();
 
-
 // If your project bootstraps headers/CSP, you can keep this:
 require_once __DIR__ . '/config/bootstrap.php';
 require_once __DIR__ . '/config/csrf.php';
 
-
-
+// Enforce POST + CSRF for logout to prevent CSRF logouts.
+if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
+    header('Allow: POST', true, 405);
+    ob_end_clean();
+    exit();
+}
+require_csrf();
 
 // 1) Clear all session data
 session_unset();
@@ -43,6 +47,7 @@ session_regenerate_id(true);
 if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
     header('Content-Type: application/json');
     echo json_encode(['success' => true, 'redirect' => 'index.php']);
+    ob_end_clean();
     exit();
 }
 

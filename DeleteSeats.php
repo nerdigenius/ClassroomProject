@@ -130,7 +130,14 @@ try {
 } catch (Throwable $e) {
   mysqli_rollback($link);
   http_response_code(500);
-  echo json_encode(['success' => false, 'message' => 'Server error', 'detail' => $e->getMessage()]);
+
+  // Avoid leaking internal error details to the client.
+  error_log('DeleteSeats error: ' . $e->getMessage());
+  $payload = ['success' => false, 'message' => 'Server error'];
+  if (function_exists('is_dev') && is_dev()) {
+    $payload['detail'] = $e->getMessage();
+  }
+  echo json_encode($payload);
 } finally {
   if (isset($stmtTime) && $stmtTime) mysqli_stmt_close($stmtTime);
   if (isset($stmtSeat) && $stmtSeat) mysqli_stmt_close($stmtSeat);
