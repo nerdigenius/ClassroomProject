@@ -22,16 +22,22 @@ require_csrf();
 
 // Check if the date parameter is set
 if (!isset($_POST['date'])) {
-    echo json_encode(array('error' => 'Date parameter is missing.'));
+    http_response_code(400);
+    echo json_encode(['error' => 'Date parameter is missing.']);
     exit();
 }
 
 // Get the date parameter
-$date = $_POST['date'];
+$date = (string)$_POST['date'];
 
+// Basic sanity: enforce YYYY-MM-DD to avoid unexpected formats
+if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
+    http_response_code(400);
+    echo json_encode(['error' => 'Invalid date format.']);
+    exit();
+}
 
-
-//Run query safely
+// Run query safely
 $stmt = $link->prepare("
 SELECT s.id, s.room_number, s.seat_number, sc.seat_capacity, ts.start_time, ts.end_time,
        CASE WHEN b.id IS NOT NULL THEN 'booked' ELSE 'available' END AS status
