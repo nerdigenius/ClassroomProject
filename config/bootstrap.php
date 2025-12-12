@@ -99,7 +99,7 @@ header("X-Content-Type-Options: nosniff");
 $csp  = "default-src 'self'; ";
 $csp .= "base-uri 'self'; ";
 $csp .= "object-src 'none'; ";
-$csp .= "img-src 'self' data: https://api.qrserver.com/v1/create-qr-code/; ";
+$csp .= "img-src 'self' data: https://api.qrserver.com/v1/create-qr-code/ https://errors.infinityfree.net; ";
 // Allow styles from this origin and keep inline CSS working for now.
 // NOTE: 'unsafe-inline' here applies only to CSS, not to scripts.
 $csp .= "style-src 'self' 'unsafe-inline'; ";
