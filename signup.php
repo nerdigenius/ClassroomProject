@@ -22,7 +22,7 @@ if(empty($_SESSION['2FA_enabled'])){
     <?= csrf_meta(); ?>
     <link rel="stylesheet" href="style.css">
     <title>ClassRoomBooking</title>
-    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js" defer></script>
       <script src="assets/js/signup.js" defer></script>
       <script src="particle.js" defer></script>
 </head>

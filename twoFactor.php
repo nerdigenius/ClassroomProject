@@ -28,11 +28,12 @@ if (empty($_SESSION['user_id']) || empty($_SESSION['2FA_enabled']) || !empty($_S
   <?php require_once __DIR__ . '/config/csrf.php';
   echo csrf_meta(); ?>
   <script src="assets/js/twofactor.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js" defer></script>
 </head>
 
 <body>
   <div id="particles-js"></div>
-  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+
 
   <div class="navbar">
     <img id="appLogo" src='assets/images/logo.png' alt="My" class="appLogo">
