@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/config/bootstrap.php';
 require_once __DIR__ . '/config/csrf.php';
+require_once __DIR__ . '/config/rate_limit.php';
 
 // Must be logged in and MFA passed
 if (empty($_SESSION['user_id']) || empty($_SESSION['mfa_passed'])) {
@@ -30,6 +31,10 @@ $query = "UPDATE user SET secret_key = ?, `2FA_enabled` = 1 WHERE id = ?";
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header('Content-Type: application/json');
     require_csrf();
+
+    // Limit 2FA setup verification attempts to reduce brute-force risk.
+    // e.g. at most 5 attempts per 5 minutes per session.
+    rate_limit_or_fail('2fa_setup_verify', 5, 300);
 
     $code = preg_replace('/\D/', '', $_POST['code'] ?? '');
 

@@ -65,15 +65,59 @@
               } else {
                 window.alert(response["message"]);
               }
+            } else if (xhr.status === 429) {
+              // Rate-limited: read retry_after (seconds) from JSON/body if present
+              var waitSeconds = 0;
+              try {
+                var body = JSON.parse(xhr.responseText || "{}");
+                if (typeof body.retry_after === "number") {
+                  waitSeconds = body.retry_after;
+                }
+              } catch (e) {
+                // ignore JSON parse errors here
+              }
 
-              
-              //location.href = 'useraccount.php'
-              // Insertion successful, update the UI accordingly
+              if (!waitSeconds) {
+                // try Retry-After header as a fallback
+                var ra = xhr.getResponseHeader("Retry-After");
+                if (ra) {
+                  var parsed = parseInt(ra, 10);
+                  if (!isNaN(parsed) && parsed > 0) {
+                    waitSeconds = parsed;
+                  }
+                }
+              }
+
+              var msg;
+              if (waitSeconds && waitSeconds > 0) {
+                var minutes = Math.floor(waitSeconds / 60);
+                var seconds = waitSeconds % 60;
+                if (minutes > 0) {
+                  msg =
+                    "Too many signup attempts. Please wait " +
+                    minutes +
+                    " minute(s) and " +
+                    seconds +
+                    " second(s) before trying again.";
+                } else {
+                  msg =
+                    "Too many signup attempts. Please wait " +
+                    seconds +
+                    " second(s) before trying again.";
+                }
+              } else {
+                msg =
+                  "Too many signup attempts. Please wait a moment before trying again.";
+              }
+
+              window.alert(msg);
             } else {
               console.error(xhr.statusText);
-              // Insertion failed, show an error message
+              window.alert(
+                "Signup failed due to a server error. Please try again."
+              );
             }
-          } 
+          }
         };
 
         xhr.open("POST", "signupValidation.php");

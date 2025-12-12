@@ -3,10 +3,12 @@
 declare(strict_types=1);
 require_once __DIR__ . '/config/bootstrap.php';
 require_once __DIR__ . '/config/csrf.php';
+require_once __DIR__ . '/config/rate_limit.php';
 header('Content-Type: application/json');
 
-
-
+// Strong per-session throttle to avoid signup abuse
+// e.g. max 3 attempts every 15 minutes per session
+rate_limit_or_fail('signup', 3, 900);
 
 // Read raw request body and parse JSON
 

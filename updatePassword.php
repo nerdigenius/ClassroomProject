@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/config/bootstrap.php';
 require_once __DIR__ . '/config/csrf.php';
+require_once __DIR__ . '/config/rate_limit.php';
 
 
 header('Content-Type: application/json; charset=utf-8');
@@ -13,6 +14,10 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     ]);
     exit();
 }
+
+// Throttle password reset attempts per session to prevent abuse
+// e.g. max 5 password changes every 30 minutes.
+rate_limit_or_fail('password_reset', 5, 1800);
 
 if (empty($_SESSION['user_id']) || empty($_SESSION['mfa_passed'])) {
     http_response_code(401);

@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/config/bootstrap.php';
 require_once __DIR__ . '/config/csrf.php';
+require_once __DIR__ . '/config/rate_limit.php';
 
 
 header('Content-Type: application/json');
@@ -13,6 +14,10 @@ if (empty($_SESSION['user_id']) || empty($_SESSION['mfa_passed'])) {
 }
 // 2. CSRF protection
 require_csrf();
+
+// 3. Basic per-session throttle to avoid booking spam
+// e.g. at most 30 seat booking submissions every 5 minutes per session.
+rate_limit_or_fail('book_seat', 30, 300);
 
 
 $json = file_get_contents('php://input');

@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/config/bootstrap.php';
 require_once __DIR__ . '/config/csrf.php';
+require_once __DIR__ . '/config/rate_limit.php';
 
 require_csrf();
 
@@ -12,15 +13,16 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
     exit(json_encode(['success' => false, 'message' => 'Method not allowed']));
 }
 
-
-
-
 // If not fully authenticated, go to account
 if (empty($_SESSION['user_id']) || empty($_SESSION['mfa_passed'])) {
     http_response_code(401);
     echo json_encode(['success' => false, 'message' => 'Unauthorized']);
     exit();
 }
+
+// Throttle delete operations to prevent abuse
+// e.g. at most 60 classroom delete actions every 10 minutes.
+rate_limit_or_fail('delete_classroom_booking', 60, 600);
 // Get user data from session variables
 $user_id = $_SESSION['user_id'];
 $user_name = $_SESSION['user_name'];

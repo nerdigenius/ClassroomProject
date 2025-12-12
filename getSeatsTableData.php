@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/config/bootstrap.php';
 require_once __DIR__ . '/config/csrf.php';
+require_once __DIR__ . '/config/rate_limit.php';
 
 header('Content-Type: application/json');
 
@@ -12,6 +13,10 @@ if (empty($_SESSION['user_id']) || empty($_SESSION['mfa_passed'])) {
 }
 // 2. CSRF protection
 require_csrf();
+
+// 3. Throttle seat availability lookups per session
+// e.g. at most 120 checks every 5 minutes.
+rate_limit_or_fail('get_seat_table', 120, 300);
 
 
     // Get user data from session variables

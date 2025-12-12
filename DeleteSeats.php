@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/config/bootstrap.php';
 require_once __DIR__ . '/config/csrf.php';
+require_once __DIR__ . '/config/rate_limit.php';
 
 require_csrf();
 
@@ -15,6 +16,10 @@ if (empty($_SESSION['user_id']) || empty($_SESSION['mfa_passed'])) {
   echo json_encode(['success' => false, 'message' => 'Unauthorized']);
   exit();
 }
+
+// Throttle delete operations to prevent abuse
+// e.g. at most 60 seat delete actions every 10 minutes.
+rate_limit_or_fail('delete_seat_booking', 60, 600);
 // Get user data from session variables
 $user_id = $_SESSION['user_id'];
 $user_name = $_SESSION['user_name'];
