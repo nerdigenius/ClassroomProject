@@ -131,14 +131,40 @@ Then visit **http://localhost:8000**
 
 ---
 
-## 🔒 Security Notes
+## �️ Security Architecture
 
-- Uses **prepared statements** everywhere to prevent SQL injection.
-- Strong **Content-Security-Policy** and **HSTS** in production.
-- CSRF token tied to session + User-Agent.
-- Session cookies hardened with `secure`, `httponly`, and `SameSite=Lax`.
-- HTTPS is **required** for production — never deploy over plain HTTP.
-- Logs (`php-error.log`) are placed outside the web root when deployed.
+This application has been audited and hardened against common web vulnerabilities (OWASP Top 10).
+
+### 🔐 Authentication & Session Management
+- **Password Storage**: Uses strong `password_hash` (Bcrypt/Argon2) with auto-salted hashes.
+- **Session Hardening**: 
+  - `HttpOnly` and `Secure` cookies prevents XSS theft.
+  - `SameSite=Lax` mitigates CSRF.
+  - Session ID regeneration on login avoids session fixation.
+- **Two-Factor Authentication (2FA)**: Time-based One-Time Password (TOTP) via Google Authenticator.
+- **Brute-Force Protection**: 
+  - Login: Throttles users after 5 failed attempts.
+  - Signup: Rate-limited to prevent mass account creation.
+  - 2FA: Rate-limited to prevent code guessing.
+
+### 💉 Injection Prevention
+- **SQL Injection**: All database queries use **Prepared Statements** (PDO/MySQLi), completely neutralizing SQL injection vectors.
+- **Cross-Site Scripting (XSS)**: 
+  - **Content Security Policy (CSP)**: Strict policy blocks inline scripts and restricts sources to self/trusted CDNs.
+  - **Output Encoding**: User input is escaped using `htmlspecialchars` before rendering.
+
+### 🛂 Access Control & Integrity
+- **CSRF Protection**: Comprehensive protection using cryptographically secure tokens validated on all state-changing requests (POST/PUT/DELETE).
+- **IDOR Prevention**: Deletion and modification logic explicitly verifies that the resource belongs to the logged-in user.
+- **Rate Limiting**: Critical actions (booking, deleting) are rate-limited per session to prevent abuse.
+
+### 🌐 Secure Configuration
+- **Security Headers**:
+  - `Strict-Transport-Security` (HSTS): Enforces HTTPS.
+  - `X-Content-Type-Options: nosniff`: Prevents MIME-type confusion.
+  - `X-Frame-Options: SAMEORIGIN`: Prevents clickjacking.
+  - `Referrer-Policy`: Protects user privacy.
+- **Error Handling**: Detailed errors are shown only in `dev` mode; production mode logs generic errors to file to prevent info leakage.
 
 ---
 
