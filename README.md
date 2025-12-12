@@ -123,11 +123,17 @@ mysql -u root -p classroombooking < classroomBooking.sql
 ```
 
 ### 5️⃣ Run Locally
-Start PHP’s built-in server:
+
+#### Option A: PHP Built-in Server
 ```bash
 php -S localhost:8000
 ```
 Then visit **http://localhost:8000**
+
+#### Option B: XAMPP / WAMP / Apache
+1. Move the project folder to your `htdocs` directory (e.g., `C:\xampp\htdocs\ClassroomProject`).
+2. Start Apache and MySQL via the XAMPP Control Panel.
+3. Visit **http://localhost/ClassroomProject** in your browser.
 
 ---
 
