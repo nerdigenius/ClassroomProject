@@ -46,7 +46,7 @@ if (empty($_SESSION['user_id']) || empty($_SESSION['mfa_passed'])) {
         </div>
         <div div id="classroomTable">
 
-            <span class="tableHeader">Classrooms list:</span>
+            <span class="tableHeader">Seats list:</span>
 
             <table id="mainTable">
 
