@@ -89,6 +89,7 @@ $qrUrl = \Sonata\GoogleAuthenticator\GoogleQrUrl::generate(
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>2FA Setup</title>
 
+    <link rel="icon" href="assets/images/favicon.png" type="image/png">
     <link rel="stylesheet" href="style.css">
 
     <meta name="csrf-token" content="<?= htmlspecialchars(csrf_token(), ENT_QUOTES) ?>">

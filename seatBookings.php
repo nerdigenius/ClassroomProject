@@ -22,6 +22,7 @@ if (empty($_SESSION['user_id']) || empty($_SESSION['mfa_passed'])) {
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="assets/images/favicon.png" type="image/png">
     <title>ClassRoomBooking</title>
     <script src="assets/js/seatBookings.js" defer></script>
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js" defer></script>
