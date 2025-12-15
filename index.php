@@ -6,6 +6,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/config/bootstrap.php';
 require_once __DIR__ . '/config/csrf.php';
+require_once __DIR__ . '/config/rate_limit.php';
 
 /**
  * - bootstrap.php calls session_start() and defines $link (mysqli)
@@ -51,16 +52,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     csrf_token(); // regenerate
 }
 
-// Basic per-IP / per-session throttle (bump for failures only)
-$_SESSION['login_attempts'] = $_SESSION['login_attempts'] ?? 0;
-$_SESSION['login_last']     = $_SESSION['login_last']     ?? 0;
-
-function too_many_attempts(): bool
-{
-    // 5 attempts within 10 minutes -> throttle
-    return $_SESSION['login_attempts'] >= 5 && (time() - $_SESSION['login_last']) < 600;
-}
-
 function flash_and_redirect(string $type, string $text): void
 {
     $_SESSION['flash'] = ['type' => $type, 'text' => $text];
@@ -71,18 +62,11 @@ function flash_and_redirect(string $type, string $text): void
 // Check if the form was submitted
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     require_csrf();
-
-    if (too_many_attempts()) {
-        flash_and_redirect('error', 'Please try again later.');
-        usleep(random_int(100000, 300000)); 
-    }
     // Collect user input
     $email    = strtolower(trim($_POST['email'] ?? ''));
     $password = (string)($_POST['password'] ?? '');
 
     if (!filter_var($email, FILTER_VALIDATE_EMAIL) || $password === '' || strlen($password) > 1024) {
-        $_SESSION['login_attempts']++;
-        $_SESSION['login_last'] = time();
         flash_and_redirect('error', 'Invalid email or password.');
     }
 
@@ -103,8 +87,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $hash_to_check = $user['password'] ?? $dummy_hash;
 
     if (!password_verify($password, trim((string)$hash_to_check)) || !$user) {
-        $_SESSION['login_attempts']++;
-        $_SESSION['login_last'] = time();
+        
+        // IP-based login throttle (per client IP, shared across sessions on that IP):
+        // 5 failed attempts per 10 minutes per IP address.
+        if (!rate_limit_ip_check('login_ip', 5, 600)) {
+            // Log the event if needed
+            error_log('Brute force blocked from IP: ' . ($_SERVER['REMOTE_ADDR'] ?? 'unknown'));
+            flash_and_redirect('error', 'Too many failed attempts.IP blocked Please try again later.');
+        }
+
         flash_and_redirect('error', 'Invalid email or password.');
     }
 
@@ -117,9 +108,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
 
-    // Success: reset throttle and harden session
-    $_SESSION['login_attempts'] = 0;
-    $_SESSION['login_last']     = time();
+    // Success: reset rate limits (handled by rate_limit_check/ip) and harden session
     session_regenerate_id(true);
 
     $_SESSION['user_id']      = (int)$user['id'];

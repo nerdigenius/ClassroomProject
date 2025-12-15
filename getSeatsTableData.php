@@ -14,9 +14,9 @@ if (empty($_SESSION['user_id']) || empty($_SESSION['mfa_passed'])) {
 // 2. CSRF protection
 require_csrf();
 
-// 3. Throttle seat availability lookups per session
-// e.g. at most 120 checks every 5 minutes.
-rate_limit_or_fail('get_seat_table', 120, 300);
+// 3. Session-based throttle for seat availability lookups:
+// at most 120 checks every 5 minutes for this browser session.
+rate_limit_or_fail_session('get_seat_table', 120, 300);
 
 
     // Get user data from session variables

@@ -107,6 +107,19 @@ CREATE TABLE `classroombookings` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `ip_rate_limits`
+--
+
+CREATE TABLE `ip_rate_limits` (
+  `ip_hash` varchar(64) NOT NULL,
+  `action_key` varchar(64) NOT NULL,
+  `attempts` int(11) NOT NULL DEFAULT 0,
+  `reset_at` int(11) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `seats`
 --
 
@@ -234,6 +247,12 @@ ALTER TABLE `classroombookings`
   ADD KEY `user_id` (`user_id`),
   ADD KEY `booked_item_id` (`booked_item_id`),
   ADD KEY `time_slot_id` (`time_slot_id`);
+
+--
+-- Indexes for table `ip_rate_limits`
+--
+ALTER TABLE `ip_rate_limits`
+  ADD PRIMARY KEY (`ip_hash`,`action_key`);
 
 --
 -- Indexes for table `seats`

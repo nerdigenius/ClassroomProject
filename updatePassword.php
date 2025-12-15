@@ -15,9 +15,9 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit();
 }
 
-// Throttle password reset attempts per session to prevent abuse
-// e.g. max 5 password changes every 30 minutes.
-rate_limit_or_fail('password_reset', 5, 1800);
+// Session-based throttle for authenticated password changes:
+// max 5 password changes every 30 minutes for this browser session.
+rate_limit_or_fail_session('password_reset', 5, 1800);
 
 if (empty($_SESSION['user_id']) || empty($_SESSION['mfa_passed'])) {
     http_response_code(401);

@@ -1,25 +1,15 @@
 <?php
 require_once __DIR__ . '/config/bootstrap.php';
 require_once __DIR__ . '/config/csrf.php';
+require_once __DIR__ . '/config/rate_limit.php';
 
 header('Content-Type: application/json');
 
 require_csrf();
 
-$_SESSION['mfa_attempts'] = $_SESSION['mfa_attempts'] ?? 0;
-$_SESSION['mfa_last']     = $_SESSION['mfa_last']     ?? 0;
-
-function mfa_too_many_attempts(): bool
-{
-    // 5 attempts within 30 seconds -> throttle
-    return $_SESSION['mfa_attempts'] >= 5 && (time() - $_SESSION['mfa_last']) < 30;
-}
-
-if (mfa_too_many_attempts()) {
-    http_response_code(429);
-    echo json_encode(['success' => false, 'message' => 'Too many attempts. Try again later.']);
-    exit();
-}
+// Session-based 2FA verification throttle (per browser session):
+// 5 attempts per 30 seconds for this session.
+rate_limit_or_fail_session('mfa_verify', 5, 30);
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Access the posted data sent from the client-side
@@ -62,14 +52,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 // Check the received code against the retrieved secret
                 if ($g->checkCode($secret, $code)) {
                     $_SESSION['mfa_passed'] = true;
-                    $_SESSION['mfa_attempts'] = 0;
-                    $_SESSION['mfa_last']     = time();
                     echo json_encode(['success' => true, 'message' => 'Code verification successful']);
                     // Perform further actions if the code is correct
 
                 } else {
-                    $_SESSION['mfa_attempts']++;
-                    $_SESSION['mfa_last'] = time();
                     echo json_encode(['success' => false, 'message' => 'Incorrect or expired code']);
                     exit();
                 }

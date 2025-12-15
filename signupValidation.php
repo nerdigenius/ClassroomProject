@@ -6,9 +6,20 @@ require_once __DIR__ . '/config/csrf.php';
 require_once __DIR__ . '/config/rate_limit.php';
 header('Content-Type: application/json');
 
-// Strong per-session throttle to avoid signup abuse
-// e.g. max 3 attempts every 15 minutes per session
-rate_limit_or_fail('signup', 3, 900);
+// IP-based throttle (per client IP address, backed by ip_rate_limits table):
+// max 10 signup attempts per hour from the same IP.
+if (!rate_limit_ip_check('signup_ip', 10, 3600)) {
+    http_response_code(429);
+    echo json_encode([
+        'success' => false,
+        'message' => 'Too many signup attempts from this IP. Please try again later.'
+    ]);
+    exit();
+}
+
+// Session-based throttle (per browser session) to avoid signup abuse:
+// max 3 signup attempts every 15 minutes for this session.
+rate_limit_or_fail_session('signup', 3, 900);
 
 // Read raw request body and parse JSON
 

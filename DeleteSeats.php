@@ -17,9 +17,9 @@ if (empty($_SESSION['user_id']) || empty($_SESSION['mfa_passed'])) {
   exit();
 }
 
-// Throttle delete operations to prevent abuse
-// e.g. at most 60 seat delete actions every 10 minutes.
-rate_limit_or_fail('delete_seat_booking', 60, 600);
+// Session-based throttle for delete-seat operations:
+// at most 60 delete actions every 10 minutes for this browser session.
+rate_limit_or_fail_session('delete_seat_booking', 60, 600);
 // Get user data from session variables
 $user_id = $_SESSION['user_id'];
 $user_name = $_SESSION['user_name'];

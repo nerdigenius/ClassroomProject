@@ -15,9 +15,9 @@ if (empty($_SESSION['user_id']) || empty($_SESSION['mfa_passed'])) {
 // 2. CSRF protection
 require_csrf();
 
-// 3. Throttle availability lookups per session to reduce abuse
-// e.g. at most 120 classroom availability checks every 5 minutes.
-rate_limit_or_fail('get_classroom_table', 120, 300);
+// 3. Session-based throttle for classroom availability lookups:
+// at most 120 checks every 5 minutes for this browser session.
+rate_limit_or_fail_session('get_classroom_table', 120, 300);
 
 
 
