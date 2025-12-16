@@ -138,7 +138,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <title>ClassRoomBooking</title>
     <link rel="icon" href="assets/images/favicon.png" type="image/png">
     <link rel="stylesheet" href="style.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
     <?php echo csrf_meta(); ?>
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js" defer></script>
     <script src="particle.js" defer></script>
@@ -146,11 +145,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <body>
     <div id="particles-js"></div>
-    <script src="assets/js/index.js"></script>
     
 
     <div class="navbar">
-        <img  id='appLogo' src='assets/images/logo.png' alt="My" class="appLogo">
+        <img id='appLogo' src='assets/images/logo.png' alt="My" class="appLogo" loading="lazy" decoding="async">
         <h1>ClassRoom Booking System</h1>
     </div>
 
@@ -161,7 +159,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <p class="textClass">Book your classroom now!</p>
             </div>
             <div class="loginLogoBackGround">
-                <img src="assets/images/loginLogo.svg" />
+                <img src="assets/images/loginLogo.svg" loading="lazy" decoding="async" />
             </div>
 
             <div class="textClass">
@@ -236,6 +234,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </form>
         <form id="signup-form" action="signup.php" method="get"></form>
     </div>
+    <script src="assets/js/index.js" defer></script>
 </body>
 
 

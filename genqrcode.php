@@ -93,11 +93,9 @@ $qrUrl = \Sonata\GoogleAuthenticator\GoogleQrUrl::generate(
     <link rel="stylesheet" href="style.css">
 
     <meta name="csrf-token" content="<?= htmlspecialchars(csrf_token(), ENT_QUOTES) ?>">
-    <script src="assets/js/genqrcode.js" defer></script>
-    <script src="particle.js" defer></script>
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js" defer></script>
-
-      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <script src="particle.js" defer></script>
+    <script src="assets/js/genqrcode.js" defer></script>
 
 </head>
 
@@ -105,7 +103,7 @@ $qrUrl = \Sonata\GoogleAuthenticator\GoogleQrUrl::generate(
     <div id="particles-js"></div>
     
     <div class="navbar">
-        <img id="appLogo" src='assets/images/logo.png' alt="My" class="appLogo">
+        <img id="appLogo" src='assets/images/logo.png' alt="My" class="appLogo" loading="lazy" decoding="async">
         <h1>ClassRoom Booking System</h1>
     </div>
     
@@ -115,12 +113,12 @@ $qrUrl = \Sonata\GoogleAuthenticator\GoogleQrUrl::generate(
         <!-- Flash container -->
         <div id="flashBox"></div>
         <div class="qr-block">
-            <img src="<?= htmlspecialchars($qrUrl, ENT_QUOTES) ?>" alt="Scan this QR">
+            <img src="<?= htmlspecialchars($qrUrl, ENT_QUOTES) ?>" alt="Scan this QR" loading="lazy" decoding="async">
         </div>
 
         <p class="username" >Scan the QR in Google Authenticator App</p>
         <p class="username" >Then enter the 6-digit code below to complete setup.</p>
-        <p class="username" >Download <img src="assets/images/authenticator.svg" class="authenticator-inline-icon" alt=""> GoogleAuthenticator <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&pcampaignid=web_share" class="download-link-large"  target="_blank" >here</a></p>
+        <p class="username" >Download <img src="assets/images/authenticator.svg" class="authenticator-inline-icon" alt="" loading="lazy" decoding="async"> GoogleAuthenticator <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&pcampaignid=web_share" class="download-link-large"  target="_blank" >here</a></p>
 
 
 

@@ -24,19 +24,18 @@ if (empty($_SESSION['user_id']) || empty($_SESSION['mfa_passed'])) {
     <link rel="stylesheet" href="style.css">
     <link rel="icon" href="assets/images/favicon.png" type="image/png">
     <title>ClassRoomBooking</title>
-    <script src="assets/js/seatBookings.js" defer></script>
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js" defer></script>
      <?= csrf_meta(); ?>
+    <script src="particle.js" defer></script>
+    <script src="assets/js/seatBookings.js" defer></script>
      
 </head>
 
 <body>
     <div id="particles-js"></div>
     
-    <script src="particle.js" defer></script>
-    
     <div class="navbar">
-        <img id="appLogo" src='assets/images/logo.png' alt="My" class="appLogo">
+        <img id="appLogo" src='assets/images/logo.png' alt="My" class="appLogo" loading="lazy" decoding="async">
         <h1>ClassRoom Booking System</h1>
     </div>
     <div class="userAccount">

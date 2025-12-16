@@ -21,20 +21,20 @@ if (empty($_SESSION['user_id']) || empty($_SESSION['mfa_passed'])) {
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="assets/js/classRoomBookings.js" defer></script>
      <?= csrf_meta(); ?>
     <link rel="stylesheet" href="style.css">
     <link rel="icon" href="assets/images/favicon.png" type="image/png">
     <title>ClassRoomBooking</title>
-    <script src="particle.js" defer></script>
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js" defer></script>
+    <script src="particle.js" defer></script>
+    <script src="assets/js/classRoomBookings.js" defer></script>
 </head>
 
 <body>
     <div id="particles-js"></div>
     
     <div class="navbar">
-        <img id="appLogo"  src='assets/images/logo.png' alt="My" class="appLogo">
+        <img id="appLogo" src='assets/images/logo.png' alt="My" class="appLogo" loading="lazy" decoding="async">
         <h1>ClassRoom Booking System</h1>
     </div>
     <div class="userAccount">

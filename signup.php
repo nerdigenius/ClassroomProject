@@ -24,15 +24,15 @@ if(empty($_SESSION['2FA_enabled'])){
     <link rel="icon" href="assets/images/favicon.png" type="image/png">
     <title>ClassRoomBooking</title>
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js" defer></script>
-      <script src="assets/js/signup.js" defer></script>
-      <script src="particle.js" defer></script>
+    <script src="particle.js" defer></script>
+    <script src="assets/js/signup.js" defer></script>
 </head>
 
 <body>
     <div id="particles-js"></div>
     
     <div class="navbar">
-        <img id="appLogo" src='assets/images/logo.png' alt="My" class="appLogo">
+        <img id="appLogo" src='assets/images/logo.png' alt="My" class="appLogo" loading="lazy" decoding="async">
         <h1>ClassRoom Booking System</h1>
     </div>
     <div class="login">

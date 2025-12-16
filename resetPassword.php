@@ -22,10 +22,9 @@ $disabled = $email !== '' ? 'disabled' : '';
 </head>
 
 <body>
-    <script src="assets/js/resetPassword.js" defer></script>
     <div id="particles-js"></div>
     <div class="navbar">
-        <img id="appLogo" src='assets/images/logo.png' alt="My" class="appLogo">
+        <img id="appLogo" src='assets/images/logo.png' alt="My" class="appLogo" loading="lazy" decoding="async">
         <h1>ClassRoom Booking System</h1>
     </div>
     <div class="login">
@@ -51,6 +50,7 @@ $disabled = $email !== '' ? 'disabled' : '';
             </div>
         </div>
     </div>
+    <script src="assets/js/resetPassword.js" defer></script>
 </body>
 
 </html>

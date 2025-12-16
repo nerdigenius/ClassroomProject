@@ -31,20 +31,20 @@ if (empty($_SESSION['user_id']) || empty($_SESSION['mfa_passed'])) {
     <link rel="icon" href="assets/images/favicon.png" type="image/png">
     <title>ClassRoomBooking</title>
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js" defer></script>
-    <script src="assets/js/useraccount.js" defer></script>
     <script src="particle.js" defer></script>
+    <script src="assets/js/useraccount.js" defer></script>
 </head>
 
 <body>
     <div id="particles-js"></div>
     
     <div class="navbar">
-        <img id="appLogo" src='assets/images/logo.png' alt="My" class="appLogo">
+        <img id="appLogo" src='assets/images/logo.png' alt="My" class="appLogo" loading="lazy" decoding="async">
         <h1>ClassRoom Booking System</h1>
     </div>
     <div class="userAccount">
         <div class="userinfo">
-            <img src="assets/images/userAccount.svg" class="userIcon" alt="">
+            <img src="assets/images/userAccount.svg" class="userIcon" alt="" loading="lazy" decoding="async">
             <div class="user-info-details">
                 <span class="username">Username:<?= htmlspecialchars($user_name, ENT_QUOTES, 'UTF-8') ?></span>
                 <button id="reset_password" class="btn-reset-password">Reset Password</button>
