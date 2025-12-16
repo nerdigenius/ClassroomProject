@@ -1,0 +1,42 @@
+## Static asset caching + compression
+## - Keeps HTML/PHP non-cached (safe for CSRF/login pages)
+## - Allows browsers to cache CSS/JS/images to reduce repeat downloads
+
+<IfModule mod_headers.c>
+  # Never cache dynamic documents
+  <FilesMatch "\.(php|html?)$">
+    Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
+    Header set Pragma "no-cache"
+  </FilesMatch>
+
+  # Cache static assets (tuned for "not versioned" files)
+  <FilesMatch "\.(css|js)$">
+    Header set Cache-Control "public, max-age=604800"
+  </FilesMatch>
+
+  <FilesMatch "\.(png|jpg|jpeg|gif|svg|webp|ico)$">
+    Header set Cache-Control "public, max-age=2592000"
+  </FilesMatch>
+</IfModule>
+
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresDefault "access plus 0 seconds"
+
+  ExpiresByType text/css "access plus 7 days"
+  ExpiresByType text/javascript "access plus 7 days"
+  ExpiresByType application/javascript "access plus 7 days"
+
+  ExpiresByType image/png "access plus 30 days"
+  ExpiresByType image/jpeg "access plus 30 days"
+  ExpiresByType image/gif "access plus 30 days"
+  ExpiresByType image/svg+xml "access plus 30 days"
+  ExpiresByType image/webp "access plus 30 days"
+  ExpiresByType image/x-icon "access plus 30 days"
+</IfModule>
+
+# Optional gzip compression (if enabled in Apache)
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/plain text/html text/css application/javascript application/json image/svg+xml
+</IfModule>
+
