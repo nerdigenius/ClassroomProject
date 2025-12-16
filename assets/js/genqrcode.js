@@ -4,6 +4,22 @@
 
   if (!form) return;
 
+  function showFlash(type, text) {
+    if (!flashBox) return;
+    const div = document.createElement("div");
+    div.className = "flash " + type;
+    div.textContent = text;
+    flashBox.appendChild(div);
+  }
+
+  function formatMinSec(totalSeconds) {
+    var s = parseInt(totalSeconds, 10);
+    if (isNaN(s) || s <= 0) return "";
+    var m = Math.floor(s / 60);
+    var r = s % 60;
+    return m > 0 ? m + "m " + r + "s" : r + "s";
+  }
+
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -20,6 +36,23 @@
 
       const data = await response.json();
 
+      // Handle non-2xx (e.g. 429 rate limit) by showing server message.
+      if (!response.ok) {
+        var retryAfter =
+          data && typeof data.retry_after === "number" ? data.retry_after : 0;
+        if (retryAfter && retryAfter > 0) {
+          showFlash(
+            "error",
+            "Too many requests. Please wait " +
+              formatMinSec(retryAfter) +
+              " before trying again."
+          );
+        } else {
+          showFlash("error", "Request failed. Please try again.");
+        }
+        return;
+      }
+
       if (flashBox && data.flash) {
         const div = document.createElement("div");
         div.className = "flash " + data.flash.type;
@@ -35,10 +68,7 @@
       }
     } catch (err) {
       if (flashBox) {
-        const div = document.createElement("div");
-        div.className = "flash error";
-        div.textContent = "Network error. Please try again.";
-        flashBox.appendChild(div);
+        showFlash("error", "Network error. Please try again.");
       }
     }
   });

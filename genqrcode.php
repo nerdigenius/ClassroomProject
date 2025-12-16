@@ -32,8 +32,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header('Content-Type: application/json');
     require_csrf();
 
-    // Session-based throttle for 2FA setup verification (per browser session):
-    // at most 5 attempts per 5 minutes for this session to reduce brute-force risk.
+    // IP-based throttle for 2FA setup verification (per client IP address):
+    // at most 5 attempts per 5 minutes from the same IP to reduce brute-force risk.
     rate_limit_ip_or_fail('2fa_setup_verify', 5, 300);
 
     $code = preg_replace('/\D/', '', $_POST['code'] ?? '');

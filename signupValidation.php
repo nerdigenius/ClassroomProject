@@ -8,11 +8,15 @@ header('Content-Type: application/json');
 
 // IP-based throttle (per client IP address, backed by ip_rate_limits table):
 // max 10 signup attempts per hour from the same IP.
-if (!rate_limit_ip_check('signup_ip', 10, 3600)) {
+$rl = rate_limit_ip_status('signup_ip', 10, 3600);
+if (empty($rl['allowed'])) {
+    $retryAfter = max(1, (int)($rl['retry_after'] ?? 3600));
     http_response_code(429);
+    header('Retry-After: ' . $retryAfter);
     echo json_encode([
         'success' => false,
-        'message' => 'Too many signup attempts from this IP. Please try again later.'
+        'message' => 'Too many signup attempts from this IP.',
+        'retry_after' => $retryAfter
     ]);
     exit();
 }

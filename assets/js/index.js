@@ -1,4 +1,25 @@
 (function () {
+  function formatMinSec(totalSeconds) {
+    var s = parseInt(totalSeconds, 10);
+    if (isNaN(s) || s <= 0) return "";
+    var m = Math.floor(s / 60);
+    var r = s % 60;
+    return m > 0 ? m + "m " + r + "s" : r + "s";
+  }
+
+  function enhanceRateLimitFlash() {
+    var flash = document.querySelector(".flash[data-retry-after]");
+    if (!flash) return;
+
+    var seconds = parseInt(flash.getAttribute("data-retry-after") || "0", 10);
+    if (!seconds || seconds <= 0) return;
+
+    flash.textContent =
+      "Too many failed attempts. Please wait " +
+      formatMinSec(seconds) +
+      " before trying again.";
+  }
+
   function setupPasswordToggle(inputId, buttonId) {
     var pwInput = document.getElementById(inputId);
     var toggleBtn = document.getElementById(buttonId);
@@ -38,10 +59,12 @@
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", function () {
       setupPasswordToggle("password", "togglePassword");
+      enhanceRateLimitFlash();
 
     });
   } else {
     setupPasswordToggle("password", "togglePassword");
+    enhanceRateLimitFlash();
   }
 
   document.addEventListener("DOMContentLoaded", function () {

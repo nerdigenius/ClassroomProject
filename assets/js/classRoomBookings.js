@@ -1,4 +1,38 @@
 (function () {
+  function handleRateLimitXhr(xhr) {
+    var waitSeconds = 0;
+
+    try {
+      var body = JSON.parse(xhr.responseText || "{}");
+      if (body && typeof body.retry_after === "number") waitSeconds = body.retry_after;
+    } catch (e) {
+      // ignore
+    }
+
+    if (!waitSeconds) {
+      var ra = xhr.getResponseHeader && xhr.getResponseHeader("Retry-After");
+      if (ra) {
+        var parsed = parseInt(ra, 10);
+        if (!isNaN(parsed) && parsed > 0) waitSeconds = parsed;
+      }
+    }
+
+    if (waitSeconds && waitSeconds > 0) {
+      var minutes = Math.floor(waitSeconds / 60);
+      var seconds = waitSeconds % 60;
+      window.alert(
+        "Too many requests. Please wait " +
+          minutes +
+          "m " +
+          seconds +
+          "s before trying again."
+      );
+      return;
+    }
+
+    window.alert("Too many requests. Please wait a moment before trying again.");
+  }
+
   function toggleTable() {
     var dateInput = document.getElementById("setDate");
     var classroomTable = document.getElementById("classroomTable");
@@ -8,7 +42,8 @@
       var selectedDate = dateInput.value;
       var xhr = new XMLHttpRequest();
       xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4 && xhr.status === 200) {
+        if (xhr.readyState !== 4) return;
+        if (xhr.status === 200) {
           let data = JSON.parse(xhr.responseText);
           let tableHTML =
             " <tr><th style='border:0'>Room Number</th><th style='border:0'>Date</th><th style='border:0'>Time</th><th style='border:0'>Seat Capacity</th><th style='width:20px;background-color:white;border:0'></th></tr>";
@@ -95,6 +130,10 @@
             tableHTML += row;
           }
           classroomTableBody.innerHTML = tableHTML;
+        } else if (xhr.status === 429) {
+          handleRateLimitXhr(xhr);
+        } else {
+          console.error(xhr.statusText);
         }
       };
       xhr.open("POST", "getTableData.php", true);
@@ -166,6 +205,8 @@
          
           location.href = "useraccount.php";
           // Insertion successful, update the UI accordingly
+        } else if (xhr.status === 429) {
+          handleRateLimitXhr(xhr);
         } else {
           console.error(xhr.statusText);
           // Insertion failed, show an error message

@@ -9,6 +9,29 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 /**
+ * Best-effort detection for whether the client expects JSON.
+ */
+function rate_limit_expects_json(): bool
+{
+    $xrw = $_SERVER['HTTP_X_REQUESTED_WITH'] ?? '';
+    if (!empty($xrw) && strtolower($xrw) === 'xmlhttprequest') {
+        return true;
+    }
+
+    $accept = $_SERVER['HTTP_ACCEPT'] ?? '';
+    if (stripos($accept, 'application/json') !== false) {
+        return true;
+    }
+
+    $contentType = $_SERVER['CONTENT_TYPE'] ?? '';
+    if (stripos($contentType, 'application/json') !== false) {
+        return true;
+    }
+
+    return false;
+}
+
+/**
  * Check and update a per-session rate limit bucket.
  *
  * @param string $key           Logical bucket name (e.g. "signup", "book_classroom")
@@ -43,61 +66,65 @@ function rate_limit_gc(): void {
  */
 function rate_limit_ip_check(string $key, int $maxAttempts, int $windowSeconds): bool
 {
+    $status = rate_limit_ip_status($key, $maxAttempts, $windowSeconds);
+    return (bool)($status['allowed'] ?? false);
+}
+
+/**
+ * Check/update IP-based rate limit and return status (includes retry_after when blocked).
+ *
+ * @return array{allowed: bool, retry_after: int, reset_at: int}
+ */
+function rate_limit_ip_status(string $key, int $maxAttempts, int $windowSeconds): array
+{
     global $link;
+    $now = time();
+
     if (!$link instanceof mysqli) {
-        // If DB down, fail closed (deny) or open (allow)?
-        // Security-wise, probably fail open for rate limits to avoid DoS if DB is flaky,
-        // OR fail closed if strict. Let's fail open but log it, or just return false (fail closed).
-        // For this hardening, let's just ensure we don't crash.
-        error_log('rate_limit_ip_check: $link is not available.');
-        return false; // Fail closed (block request)
+        error_log('rate_limit_ip_status: $link is not available.');
+        return ['allowed' => false, 'retry_after' => max(1, $windowSeconds), 'reset_at' => $now + max(1, $windowSeconds)];
     }
+
     rate_limit_gc();
 
     $ip = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
-    $ipHash = hash('sha256', $ip); // Anonymize slightly, though not strictly required for local logic
-    $now = time();
+    $ipHash = hash('sha256', $ip);
 
-    // Upsert logic:
-    // If record exists and is valid (reset_at > now), increment attempts.
-    // If record exists and expired, reset attempts to 1 and set new window.
-    // If record doesn't exist, insert new.
-
-    // Try to get current status
     $stmt = $link->prepare("SELECT attempts, reset_at FROM ip_rate_limits WHERE ip_hash = ? AND action_key = ?");
     $stmt->bind_param('ss', $ipHash, $key);
     $stmt->execute();
     $res = $stmt->get_result();
-    $row = $res->fetch_assoc();
+    $row = $res ? $res->fetch_assoc() : null;
 
     if ($row) {
-        // Exists
-        if ($now < $row['reset_at']) {
-            // Window active
-            if ($row['attempts'] >= $maxAttempts) {
-                return false; // Blocked
+        $resetAt = (int)$row['reset_at'];
+        $attempts = (int)$row['attempts'];
+
+        if ($now < $resetAt) {
+            if ($attempts >= $maxAttempts) {
+                return ['allowed' => false, 'retry_after' => max(1, $resetAt - $now), 'reset_at' => $resetAt];
             }
-            // Increment
+
             $upd = $link->prepare("UPDATE ip_rate_limits SET attempts = attempts + 1 WHERE ip_hash = ? AND action_key = ?");
             $upd->bind_param('ss', $ipHash, $key);
             $upd->execute();
-            return true;
-        } else {
-            // Expired -> Reset
-            $newReset = $now + $windowSeconds;
-            $upd = $link->prepare("UPDATE ip_rate_limits SET attempts = 1, reset_at = ? WHERE ip_hash = ? AND action_key = ?");
-            $upd->bind_param('iss', $newReset, $ipHash, $key);
-            $upd->execute();
-            return true;
+            return ['allowed' => true, 'retry_after' => 0, 'reset_at' => $resetAt];
         }
-    } else {
-        // New
+
+        // Expired -> reset
         $newReset = $now + $windowSeconds;
-        $ins = $link->prepare("INSERT INTO ip_rate_limits (ip_hash, action_key, attempts, reset_at) VALUES (?, ?, 1, ?)");
-        $ins->bind_param('ssi', $ipHash, $key, $newReset);
-        $ins->execute();
-        return true;
+        $upd = $link->prepare("UPDATE ip_rate_limits SET attempts = 1, reset_at = ? WHERE ip_hash = ? AND action_key = ?");
+        $upd->bind_param('iss', $newReset, $ipHash, $key);
+        $upd->execute();
+        return ['allowed' => true, 'retry_after' => 0, 'reset_at' => $newReset];
     }
+
+    // New row
+    $newReset = $now + $windowSeconds;
+    $ins = $link->prepare("INSERT INTO ip_rate_limits (ip_hash, action_key, attempts, reset_at) VALUES (?, ?, 1, ?)");
+    $ins->bind_param('ssi', $ipHash, $key, $newReset);
+    $ins->execute();
+    return ['allowed' => true, 'retry_after' => 0, 'reset_at' => $newReset];
 }
 
 /**
@@ -105,25 +132,25 @@ function rate_limit_ip_check(string $key, int $maxAttempts, int $windowSeconds):
  */
 function rate_limit_ip_or_fail(string $key, int $maxAttempts, int $windowSeconds): void
 {
-    if (rate_limit_ip_check($key, $maxAttempts, $windowSeconds)) {
+    $status = rate_limit_ip_status($key, $maxAttempts, $windowSeconds);
+    if (!empty($status['allowed'])) {
         return;
     }
 
+    $retryAfter = max(1, (int)($status['retry_after'] ?? $windowSeconds));
     http_response_code(429);
-    header('Content-Type: application/json; charset=utf-8');
-    // For HTML forms like login, we might want a friendly error page or flash message,
-    // but the fail-safe default is JSON/Die.
-    // If it's an AJAX request:
-    if ((!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') ||
-         stripos($_SERVER['CONTENT_TYPE'] ?? '', 'application/json') !== false) {
-             echo json_encode(['success' => false, 'message' => 'Too many requests from this IP.']);
-             exit();
+    header('Retry-After: ' . $retryAfter);
+
+    $msg = 'Too many requests from this IP.';
+
+    if (rate_limit_expects_json()) {
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode(['success' => false, 'message' => $msg, 'retry_after' => $retryAfter]);
+        exit();
     }
     
-    // For standard form posts (like index.php login), we want to show the error on page usually.
-    // But this function is generic. The caller can check validation manually if they want custom behavior.
-    // For now, we hard stop.
-    die('Too many requests. Please try again later.');
+    // Plain HTML/non-AJAX fallback: include seconds only (client-side formatting not available here)
+    die($msg . ' Please try again in ' . $retryAfter . ' seconds.');
 }
 
 /**
@@ -155,13 +182,30 @@ function rate_limit_check(string $key, int $maxAttempts, int $windowSeconds): bo
     return true;
 }
 
+function rate_limit_session_retry_after(string $key, int $windowSeconds): int
+{
+    $now = time();
+    $bucket = $_SESSION['rate_limits'][$key] ?? null;
+    if (!is_array($bucket)) {
+        return max(1, $windowSeconds);
+    }
+    $resetAt = (int)($bucket['reset_at'] ?? 0);
+    if ($resetAt <= $now) {
+        return max(1, $windowSeconds);
+    }
+    return max(1, $resetAt - $now);
+}
+
 function rate_limit_or_fail_session(string $key, int $maxAttempts, int $windowSeconds): void
 {
      if (rate_limit_check($key, $maxAttempts, $windowSeconds)) {
         return;
     }
+    $retryAfter = rate_limit_session_retry_after($key, $windowSeconds);
     http_response_code(429);
-    echo json_encode(['success' => false, 'message' => 'Too many requests.']);
+    header('Retry-After: ' . $retryAfter);
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode(['success' => false, 'message' => 'Too many requests.', 'retry_after' => $retryAfter]);
     exit();   
 }
 

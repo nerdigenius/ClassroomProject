@@ -1,4 +1,38 @@
 (function () {
+  function handleRateLimitXhr(xhr) {
+    var waitSeconds = 0;
+
+    try {
+      var body = JSON.parse(xhr.responseText || "{}");
+      if (body && typeof body.retry_after === "number") waitSeconds = body.retry_after;
+    } catch (e) {
+      // ignore
+    }
+
+    if (!waitSeconds) {
+      var ra = xhr.getResponseHeader && xhr.getResponseHeader("Retry-After");
+      if (ra) {
+        var parsed = parseInt(ra, 10);
+        if (!isNaN(parsed) && parsed > 0) waitSeconds = parsed;
+      }
+    }
+
+    if (waitSeconds && waitSeconds > 0) {
+      var minutes = Math.floor(waitSeconds / 60);
+      var seconds = waitSeconds % 60;
+      window.alert(
+        "Too many requests. Please wait " +
+          minutes +
+          "m " +
+          seconds +
+          "s before trying again."
+      );
+      return;
+    }
+
+    window.alert("Too many requests. Please wait a moment before trying again.");
+  }
+
   function TextCheck() {
     let password = document.getElementById("password").value;
     let retype_password = document.getElementById("retype_password").value;
@@ -46,6 +80,8 @@
 
               //location.href = 'useraccount.php'
               // Insertion successful, update the UI accordingly
+            } else if (xhr.status === 429) {
+              handleRateLimitXhr(xhr);
             } else {
               console.error(xhr.statusText);
               // Insertion failed, show an error message

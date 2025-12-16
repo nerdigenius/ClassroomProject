@@ -52,9 +52,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     csrf_token(); // regenerate
 }
 
-function flash_and_redirect(string $type, string $text): void
+function flash_and_redirect(string $type, string $text, array $meta = []): void
 {
-    $_SESSION['flash'] = ['type' => $type, 'text' => $text];
+    $_SESSION['flash'] = array_merge(['type' => $type, 'text' => $text], $meta);
     header('Location: ' . ($_SERVER['REQUEST_URI'] ?? 'index.php'), true, 303); // PRG
     exit();
 }
@@ -90,10 +90,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         
         // IP-based login throttle (per client IP, shared across sessions on that IP):
         // 5 failed attempts per 10 minutes per IP address.
-        if (!rate_limit_ip_check('login_ip', 5, 600)) {
+        $rl = rate_limit_ip_status('login_ip', 5, 600);
+        if (empty($rl['allowed'])) {
             // Log the event if needed
             error_log('Brute force blocked from IP: ' . ($_SERVER['REMOTE_ADDR'] ?? 'unknown'));
-            flash_and_redirect('error', 'Too many failed attempts.IP blocked Please try again later.');
+            $retryAfter = max(1, (int)($rl['retry_after'] ?? 600));
+            flash_and_redirect('error', 'Too many failed attempts. Please wait…', ['retry_after' => $retryAfter]);
         }
 
         flash_and_redirect('error', 'Invalid email or password.');
@@ -170,7 +172,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <?php if (!empty($_SESSION['flash'])): ?>
                 <?php $f = $_SESSION['flash'];
                 unset($_SESSION['flash']); ?>
-                <div class="flash <?= htmlspecialchars((string)$f['type'], ENT_QUOTES) ?>">
+                <div class="flash <?= htmlspecialchars((string)$f['type'], ENT_QUOTES) ?>"
+                     <?php if (isset($f['retry_after'])): ?>
+                        data-retry-after="<?= (int)$f['retry_after'] ?>"
+                     <?php endif; ?>>
                     <?= htmlspecialchars((string)$f['text'], ENT_QUOTES) ?>
                 </div>
             <?php endif; ?>
