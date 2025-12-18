@@ -107,13 +107,13 @@ $otpauth = 'otpauth://totp/' . rawurlencode($label) . '?secret=' . rawurlencode(
 
 <body>
     <div id="particles-js"></div>
-    
+
     <div class="navbar">
         <img id="appLogo" src='assets/images/logo.png' alt="My" class="appLogo" loading="lazy" decoding="async">
         <h1>ClassRoom Booking System</h1>
     </div>
-    
-    
+
+
     <div class="login qr-login">
         <h1>2FA Setup</h1>
         <!-- Flash container -->
@@ -122,21 +122,24 @@ $otpauth = 'otpauth://totp/' . rawurlencode($label) . '?secret=' . rawurlencode(
             <img src="<?= htmlspecialchars($qrUrl, ENT_QUOTES) ?>" alt="Scan this QR" loading="lazy" decoding="async">
         </div>
 
-        <p class="username" >Scan the QR in Google Authenticator App</p>
+        <p class="username">Scan the QR in Google Authenticator App</p>
         <div class="username" style="margin-top: 10px;">
             <p style="margin:0 0 6px 0;"><strong>On the same phone?</strong> You usually can’t scan your own screen.</p>
             <p style="margin:0 0 8px 0;">Use <strong>Enter a setup key</strong> in Authenticator:</p>
             <div style="display:flex; gap:8px; align-items:center; justify-content:center; flex-wrap:wrap;">
                 <code id="setupKey" style="user-select:all; padding:6px 10px; background:#f4f4f4; border-radius:6px;"><?= htmlspecialchars($new_secret, ENT_QUOTES) ?></code>
                 <button type="button" id="copySetupKey" class="btn-fit">Copy key</button>
-                <a class="btn-fit" id="openOtpAuth" href="<?= htmlspecialchars($otpauth, ENT_QUOTES) ?>">Open in Authenticator</a>
+                <button type="button" class="btn-fit btn-authenticator" id="openOtpAuth" data-otpauth="<?= htmlspecialchars($otpauth, ENT_QUOTES) ?>">
+                    <img src="assets/images/authenticator.svg" alt="Authenticator" class="authenticator-icon" loading="lazy" decoding="async">
+                    Open in Authenticator
+                </button>
             </div>
             <p style="margin:8px 0 0 0; font-size: 0.95em; opacity: 0.9;">
                 If “Open in Authenticator” doesn’t work, copy the key and enter it manually.
             </p>
         </div>
-        <p class="username" >Then enter the 6-digit code below to complete setup.</p>
-        <p class="username" >Download <img src="assets/images/authenticator.svg" class="authenticator-inline-icon" alt="" loading="lazy" decoding="async"> GoogleAuthenticator <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&pcampaignid=web_share" class="download-link-large"  target="_blank" >here</a></p>
+        <p class="username">Then enter the 6-digit code below to complete setup.</p>
+        <p class="username">Download <img src="assets/images/authenticator.svg" class="authenticator-inline-icon" alt="" loading="lazy" decoding="async"> GoogleAuthenticator <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&pcampaignid=web_share" class="download-link-large" target="_blank">here</a></p>
 
 
 
@@ -145,7 +148,7 @@ $otpauth = 'otpauth://totp/' . rawurlencode($label) . '?secret=' . rawurlencode(
             <div class="form-group">
                 <input type="text" id="codeInput" name="code" class="form-control code-input" inputmode="numeric" placeholder=" " required />
                 <label for="codeInput" class="form-label" for="code">Enter 6-digit code:</label>
-                
+
             </div>
             <button type="submit" class="btn-fit">Confirm</button>
         </form>
