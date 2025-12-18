@@ -1,8 +1,36 @@
 (function () {
   const form = document.getElementById("codeForm");
   const flashBox = document.getElementById("flashBox");
+  const copyBtn = document.getElementById("copySetupKey");
+  const setupKeyEl = document.getElementById("setupKey");
 
   if (!form) return;
+
+  // Copy manual setup key (mobile fallback)
+  if (copyBtn && setupKeyEl) {
+    copyBtn.addEventListener("click", async () => {
+      const key = (setupKeyEl.textContent || "").trim();
+      if (!key) return;
+      try {
+        await navigator.clipboard.writeText(key);
+        showFlash("success", "Setup key copied.");
+      } catch (e) {
+        // Fallback for older browsers
+        const sel = window.getSelection();
+        const range = document.createRange();
+        range.selectNodeContents(setupKeyEl);
+        sel.removeAllRanges();
+        sel.addRange(range);
+        try {
+          document.execCommand("copy");
+          showFlash("success", "Setup key copied.");
+        } catch (err) {
+          showFlash("error", "Could not copy. Please select and copy manually.");
+        }
+        sel.removeAllRanges();
+      }
+    });
+  }
 
   function showFlash(type, text) {
     if (!flashBox) return;

@@ -80,6 +80,12 @@ $qrUrl = \Sonata\GoogleAuthenticator\GoogleQrUrl::generate(
     $new_secret,
     'ClassRoomBookingSystem'
 );
+
+// Fallback for mobile (same device) setup:
+// Allow user to manually enter the secret key, and provide an otpauth:// link.
+$issuer  = 'ClassRoomBookingSystem';
+$label   = $issuer . ':' . $user_email;
+$otpauth = 'otpauth://totp/' . rawurlencode($label) . '?secret=' . rawurlencode($new_secret) . '&issuer=' . rawurlencode($issuer);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -117,6 +123,18 @@ $qrUrl = \Sonata\GoogleAuthenticator\GoogleQrUrl::generate(
         </div>
 
         <p class="username" >Scan the QR in Google Authenticator App</p>
+        <div class="username" style="margin-top: 10px;">
+            <p style="margin:0 0 6px 0;"><strong>On the same phone?</strong> You usually can’t scan your own screen.</p>
+            <p style="margin:0 0 8px 0;">Use <strong>Enter a setup key</strong> in Authenticator:</p>
+            <div style="display:flex; gap:8px; align-items:center; justify-content:center; flex-wrap:wrap;">
+                <code id="setupKey" style="user-select:all; padding:6px 10px; background:#f4f4f4; border-radius:6px;"><?= htmlspecialchars($new_secret, ENT_QUOTES) ?></code>
+                <button type="button" id="copySetupKey" class="btn-fit">Copy key</button>
+                <a class="btn-fit" id="openOtpAuth" href="<?= htmlspecialchars($otpauth, ENT_QUOTES) ?>">Open in Authenticator</a>
+            </div>
+            <p style="margin:8px 0 0 0; font-size: 0.95em; opacity: 0.9;">
+                If “Open in Authenticator” doesn’t work, copy the key and enter it manually.
+            </p>
+        </div>
         <p class="username" >Then enter the 6-digit code below to complete setup.</p>
         <p class="username" >Download <img src="assets/images/authenticator.svg" class="authenticator-inline-icon" alt="" loading="lazy" decoding="async"> GoogleAuthenticator <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&pcampaignid=web_share" class="download-link-large"  target="_blank" >here</a></p>
 

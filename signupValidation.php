@@ -25,11 +25,13 @@ if (empty($rl['allowed'])) {
 // max 3 signup attempts every 15 minutes for this session.
 rate_limit_or_fail_session('signup', 3, 900);
 
-// Read raw request body and parse JSON
+// CSRF must be validated BEFORE consuming php://input.
+// (Some PHP setups won't allow reliably reading php://input twice.)
+require_csrf();
 
+// Read raw request body and parse JSON
 $json = file_get_contents('php://input');
 $data = json_decode($json, true);
-require_csrf();
 
 // Must be valid JSON object
 if (!is_array($data)) {

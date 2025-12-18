@@ -122,6 +122,8 @@
 
         xhr.open("POST", "signupValidation.php");
         xhr.setRequestHeader("Content-Type", "application/json");
+        // Send CSRF token in header as well (most robust for JSON endpoints)
+        xhr.setRequestHeader("X-CSRF-Token", getCsrfToken());
         xhr.send(JSON.stringify(payload));
       } else {
         window.alert("Invalid Email!!!");
