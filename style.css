@@ -15,11 +15,14 @@ body {
 
 /* Shared background particles container used on multiple pages */
 #particles-js {
-  position: absolute;
-  height: 100%;
-  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
   margin: 0;
   display: flex;
+  z-index: 0;
 }
 html {
   height: 100%;
