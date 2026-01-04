@@ -40,3 +40,6 @@
   AddOutputFilterByType DEFLATE text/plain text/html text/css application/javascript application/json image/svg+xml
 </IfModule>
 
+ <Files "classroombooking.sql">
+     Require all denied
+</Files>
