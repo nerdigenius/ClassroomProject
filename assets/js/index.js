@@ -29,7 +29,6 @@
     //get references to the child elements inside the button
 
     var pwText = document.getElementById("pwText");
-    var pwIcon = document.getElementById("pwIcon");
 
     toggleBtn.addEventListener("click", function () {
       var isHidden = pwInput.getAttribute("type") === "password";

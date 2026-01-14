@@ -139,7 +139,7 @@ $otpauth = 'otpauth://totp/' . rawurlencode($label) . '?secret=' . rawurlencode(
             </p>
         </div>
         <p class="username">Then enter the 6-digit code below to complete setup.</p>
-        <p class="username">Download <img src="assets/images/authenticator.svg" class="authenticator-inline-icon" alt="" loading="lazy" decoding="async"> GoogleAuthenticator <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&pcampaignid=web_share" class="download-link-large" target="_blank">here</a></p>
+        <p class="username">Download <img src="assets/images/authenticator.svg" class="authenticator-inline-icon" alt="" loading="lazy" decoding="async">  <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2" rel="noopener noreferrer" class="download-link-large" target="_blank">GoogleAuthenticator</a></p>
 
 
 
