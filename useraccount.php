@@ -87,7 +87,7 @@ if (empty($_SESSION['user_id']) || empty($_SESSION['mfa_passed'])) {
                     if ($result->num_rows > 0) {
                         $i = 0;
                         while ($row = $result->fetch_assoc()) {
-                            echo "<tr id='row1" . $i . "'><td>" . $row["booked_item_id"] . "</td><td>" . $row["date"] . "</td><td>" . "<span>" . $row["start_time"] . "</span>" . " to " . $row["end_time"] . "</td><td style='border: 0; width:auto'><button class='buttonTable delete-classroom-btn' >X</button></td></tr>";
+                            echo "<tr id='row1" . $i . "'><td>" . htmlspecialchars($row["booked_item_id"], ENT_QUOTES, 'UTF-8') . "</td><td>" . htmlspecialchars($row["date"], ENT_QUOTES, 'UTF-8') . "</td><td>" . "<span>" . htmlspecialchars($row["start_time"], ENT_QUOTES, 'UTF-8') . "</span>" . " to " . htmlspecialchars($row["end_time"], ENT_QUOTES, 'UTF-8') . "</td><td style='border: 0; width:auto'><button class='buttonTable delete-classroom-btn' >X</button></td></tr>";
                             $i++;
                         }
                     } else {
@@ -135,7 +135,7 @@ if (empty($_SESSION['user_id']) || empty($_SESSION['mfa_passed'])) {
                     if ($result->num_rows > 0) {
                         $i = 0;
                         while ($row = $result->fetch_assoc()) {
-                            echo "<tr id='row2" . $i . "'><td>" . $row["seat_number"] . "</td><td>" . $row["room_number"] . "</td><td>" . $row["date"] . "</td><td>" . "<span>" . $row["start_time"] . "</span>" . " to " . $row["end_time"] . "</td><td style='border: 0; width:auto'><button class='buttonTable delete-seat-btn'>X</button></td></tr>";
+                            echo "<tr id='row2" . $i . "'><td>" . htmlspecialchars($row["seat_number"], ENT_QUOTES, 'UTF-8') . "</td><td>" . htmlspecialchars($row["room_number"], ENT_QUOTES, 'UTF-8') . "</td><td>" . htmlspecialchars($row["date"], ENT_QUOTES, 'UTF-8') . "</td><td>" . "<span>" . htmlspecialchars($row["start_time"], ENT_QUOTES, 'UTF-8') . "</span>" . " to " . htmlspecialchars($row["end_time"], ENT_QUOTES, 'UTF-8') . "</td><td style='border: 0; width:auto'><button class='buttonTable delete-seat-btn'>X</button></td></tr>";
                             $i++;
                         }
                     } else {
